@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|c:\\users\\ameysunu\\desktop\\blazorapp\\custom\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|solutionrelative:custom\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|c:\\users\\ameysunu\\desktop\\blazorapp\\custom\\register.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|solutionrelative:custom\\register.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|c:\\users\\ameysunu\\desktop\\blazorapp\\blazorapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|solutionrelative:blazorapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|c:\\users\\ameysunu\\desktop\\blazorapp\\custom\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|solutionrelative:custom\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|c:\\users\\ameysunu\\desktop\\blazorapp\\blazorapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|solutionrelative:blazorapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{033ED130-3389-4313-B2C0-B4EE0F29DC9D}|BlazorApp.csproj|c:\\users\\ameysunu\\desktop\\blazorapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -50,20 +54,33 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Register.razor",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\Register.razor",
               "RelativeDocumentMoniker": "Custom\\Register.razor",
               "ToolTip": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\Register.razor",
               "RelativeToolTip": "Custom\\Register.razor",
-              "ViewState": "AQIAAJMAAAAANjMzMzMbwKAAAAAZAAAA",
+              "ViewState": "AQIAAAgAAAAAYmZmZmYUwBwAAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-03-31T10:18:17.511Z",
               "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Login.razor",
+              "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\Login.razor",
+              "RelativeDocumentMoniker": "Custom\\Login.razor",
+              "ToolTip": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\Login.razor",
+              "RelativeToolTip": "Custom\\Login.razor",
+              "ViewState": "AQIAAAEAAABAZmZmZiYwwAgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-04-01T08:43:52.271Z",
               "EditorCaption": ""
             },
             {
@@ -74,14 +91,14 @@
               "RelativeDocumentMoniker": "Custom\\_Imports.razor",
               "ToolTip": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\_Imports.razor",
               "RelativeToolTip": "Custom\\_Imports.razor",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-03-31T11:51:16.698Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -93,7 +110,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -105,7 +122,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "MainLayout.razor",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Components\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "Components\\Layout\\MainLayout.razor",
@@ -117,7 +134,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "App.razor",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Components\\App.razor",
               "RelativeDocumentMoniker": "Components\\App.razor",
@@ -129,7 +146,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "HomePage.razor",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\HomePage.razor",
               "RelativeDocumentMoniker": "Custom\\HomePage.razor",
@@ -141,7 +158,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "BlazorApp.csproj",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\BlazorApp.csproj",
               "RelativeDocumentMoniker": "BlazorApp.csproj",
@@ -149,12 +166,11 @@
               "RelativeToolTip": "BlazorApp.csproj",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-03-31T09:25:38.494Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-31T09:25:38.494Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "Weather.razor",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Components\\Pages\\Weather.razor",
               "RelativeDocumentMoniker": "Components\\Pages\\Weather.razor",
@@ -166,7 +182,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "Counter.razor",
               "DocumentMoniker": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Components\\Pages\\Counter.razor",
               "RelativeDocumentMoniker": "Components\\Pages\\Counter.razor",
