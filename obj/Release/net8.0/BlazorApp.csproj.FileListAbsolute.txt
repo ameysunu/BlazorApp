@@ -43,3 +43,4 @@ C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\refint\BlazorApp.dll
 C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\BlazorApp.pdb
 C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\BlazorApp.genruntimeconfig.cache
 C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\ref\BlazorApp.dll
+C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\BlazorApp.sourcelink.json

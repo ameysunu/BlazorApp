@@ -10,12 +10,21 @@
 
     <button class="btn btn-primary" @onclick="_Login" disabled="@processRegistration">Secure Login with Auth0</button>
 
+    @if (!string.IsNullOrEmpty(CodeParameter))
+    {
+        <div class="alert alert-success mt-3" role="alert">
+            Success! You're logged in. Redirecting to dashboard...
+        </div>
+    }
+
 </div>
 
 
 
 @code {
     private bool processRegistration = false;
+    private bool codeExists = false;
+    string CodeParameter;
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
@@ -28,4 +37,18 @@
     $"&redirect_uri=https://ameyplayground.azurewebsites.net/login";
         NavigationManager.NavigateTo(authorizeUrl);
     }
+
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        CodeParameter = queryParams["code"];
+
+        if (!string.IsNullOrEmpty(CodeParameter))
+        {
+            processRegistration = true;
+        }
+    }
+
+
 }

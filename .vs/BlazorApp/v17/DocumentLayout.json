@@ -64,7 +64,7 @@
               "RelativeDocumentMoniker": "Custom\\Register.razor",
               "ToolTip": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\Register.razor",
               "RelativeToolTip": "Custom\\Register.razor",
-              "ViewState": "AQIAAAgAAAAAYmZmZmYUwBwAAAARAAAA",
+              "ViewState": "AQIAAAYAAAAA7TIzMzPbvw8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-03-31T10:18:17.511Z",
               "IsPinned": true,
@@ -78,7 +78,7 @@
               "RelativeDocumentMoniker": "Custom\\Login.razor",
               "ToolTip": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\Custom\\Login.razor",
               "RelativeToolTip": "Custom\\Login.razor",
-              "ViewState": "AQIAAAEAAABAZmZmZiYwwAgAAAAAAAAA",
+              "ViewState": "AQIAABcAAADgNDMzM3MvwCQAAABEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-04-01T08:43:52.271Z",
               "EditorCaption": ""
@@ -93,8 +93,7 @@
               "RelativeToolTip": "Custom\\_Imports.razor",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-03-31T11:51:16.698Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-31T11:51:16.698Z"
             },
             {
               "$type": "Document",
