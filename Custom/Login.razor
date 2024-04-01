@@ -39,7 +39,7 @@
         NavigationManager.NavigateTo(authorizeUrl);
     }
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
@@ -48,10 +48,46 @@
         if (!string.IsNullOrEmpty(CodeParameter))
         {
             processRegistration = true;
-            // Still need to get the AuthToken from Auth0 for the user
-            JS.InvokeVoidAsync("localStorage.setItem", "authToken", CodeParameter);
+            var userAuthToken = await GetAuthToken(CodeParameter);
+            if (userAuthToken != null)
+            {
+                JS.InvokeVoidAsync("localStorage.setItem", "authToken", $"{userAuthToken}");
+            }
         }
     }
 
+    private async Task<String> GetAuthToken(string code)
+    {
+        var tokenEndpoint = $"https://dev-pa3bipmqjbfbdc4d.us.auth0.com/oauth/token";
 
+        var requestContent = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("grant_type", "authorization_code"),
+            new KeyValuePair<string, string>("client_id", "bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B"),
+            new KeyValuePair<string, string>("client_secret", "3O4ilQ71uKmdXM1g4H2-hWKbcuxD1NuiLNntx_oMtgoqTDeQi1P8BRtQ7c7b29y7"),
+            new KeyValuePair<string, string>("code", code),
+            new KeyValuePair<string, string>("redirect_uri", "https://localhost:7134/login")
+        });
+
+        using (HttpClient httpClient = new HttpClient())
+        {
+
+            var response = await httpClient.PostAsync(tokenEndpoint, requestContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                dynamic json = Newtonsoft.Json.JsonConvert.DeserializeObject(responseContent);
+                //JS.InvokeVoidAsync("localStorage.setItem", "authToken", json.access_token);
+                return json.access_token;
+            }
+            else
+            {
+                // Handle error
+                Console.WriteLine($"Error authenticating: {response.StatusCode}");
+                JS.InvokeVoidAsync("localStorage.setItem", "authToken", $"{response.StatusCode}");
+                return null;
+            }
+        }
+    }
 }
