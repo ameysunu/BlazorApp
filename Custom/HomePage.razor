@@ -1,0 +1,40 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<h1>Welcome to Wellbeing!</h1>
+
+<p>Login or Register to continue.</p>
+
+@* <div>
+    <button class="btn btn-primary" @onclick="OnTapLogin">Login</button>
+    <button class="btn btn-primary" @onclick="OnRegisterTap">Registration</button>
+</div> *@
+<p>@loginSelected</p>
+
+
+@if (loginSelected)
+{
+    <p>Login</p>
+}
+else if (registerSelected)
+{
+    <p>Register</p>
+}
+
+@code {
+    bool loginSelected = false;
+    bool registerSelected = false;
+
+    public void OnTapLogin()
+    {
+        loginSelected = true;
+        registerSelected = false;
+        Console.WriteLine("Login tapped");
+    }
+
+    public void OnRegisterTap()
+    {
+        registerSelected = true;
+        loginSelected = false;
+    }
+}

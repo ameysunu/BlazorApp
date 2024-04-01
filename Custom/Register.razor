@@ -1,0 +1,201 @@
+﻿@page "/register"
+<PageTitle>Register</PageTitle>
+
+<div class="container">
+    <h1>Registration</h1>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @errorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success mt-3" role="alert">
+            @successMessage
+        </div>
+    }
+
+    @if (successCreation)
+    {
+        <button class="btn btn-primary" onclick="window.location.href='/login'" >Go to login</button>
+    }
+    else
+    {
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <div class="input-group">
+                        <input id="email" class="form-control" @bind="email" placeholder="Email" />
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <div class="input-group">
+                        <input id="email" class="form-control" @bind="confirmEmail" placeholder="Confirm email" />
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <div class="input-group">
+                        <input type="password" id="password" class="form-control" @bind="password" placeholder="Password" />
+                    </div>
+                </div>
+                <button class="btn btn-primary" @onclick="_Register" disabled="@processRegistration">Register</button>
+            </div>
+        </div>
+    }
+</div>
+
+    @code {
+        private string email;
+        private string confirmEmail;
+        private string password;
+        private string errorMessage;
+        private string successMessage;
+        private bool processRegistration = false;
+        private bool successCreation = false;
+
+        private async void _Register()
+        {
+            if(ValidationCheck(email, confirmEmail, password)){
+                Console.WriteLine($"Email: {email}, Confirm Email: {confirmEmail}, Password: {password}");
+                processRegistration = true;
+                var authToken = await GetTokenFromAuth();
+
+                if(authToken != null)
+                {
+                    Console.WriteLine(authToken.access_token);
+                    var createUser = await CreateUser(email, password, authToken.access_token);
+                    if (createUser.Contains("Exception"))
+                    {
+                        successMessage = "";
+                        errorMessage = createUser;
+                        processRegistration = false;
+
+                        StateHasChanged();
+                    } else
+                    {
+                        successMessage = "Success! User has been created.";
+                        processRegistration = false;
+                        successCreation = true;
+
+                    StateHasChanged();
+                }
+            }
+        }
+    }
+
+    private bool ValidationCheck(String email, String confirmEmail, String password)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            errorMessage = "Email field is empty. Please put a valid email.";
+            return false;
+        }
+        else if (string.IsNullOrEmpty(confirmEmail))
+        {
+            errorMessage = "Please confirm your email.";
+            return false;
+        }
+        else if (string.IsNullOrEmpty(password))
+        {
+            errorMessage = "Password cannot be empty.";
+            return false;
+        }
+        else if(email != confirmEmail)
+        {
+            errorMessage = "Emails do not match";
+            return false;
+        } else if(password.Length < 6)
+        {
+            errorMessage = "Entered password needs a minimum length of 6 characters";
+            return false;
+        }
+        errorMessage = "";
+        successMessage = "Validation passed. Creating account.....";
+        return true;
+    }
+
+    private static async Task<String> CreateUser(String email, String password, String token)
+    {
+        var client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://dev-pa3bipmqjbfbdc4d.us.auth0.com/api/v2/users");
+        request.Headers.Add("Accept", "application/json");
+        request.Headers.Add("Authorization", $"Bearer {token}");
+
+        var jsonPayload = $"{{\"email\":\"{email}\",\"password\":\"{password}\", \"connection\": \"Username-Password-Authentication\"}}";
+        var content = new StringContent(jsonPayload, null, "application/json");
+
+        //var content = new StringContent("{\"email\":\"user@example.com\",\"phone_number\":\"string\",\"user_metadata\":{},\"blocked\":false,\"email_verified\":false,\"phone_verified\":false,\"app_metadata\":{},\"given_name\":\"string\",\"family_name\":\"string\",\"name\":\"string\",\"nickname\":\"string\",\"picture\":\"string\",\"user_id\":\"string\",\"connection\":\"string\",\"password\":\"string\",\"verify_email\":false,\"username\":\"string\"}", null, "application/json");
+        request.Content = content;
+        var response = await client.SendAsync(request);
+
+        try
+        {
+            response.EnsureSuccessStatusCode();
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            return await response.Content.ReadAsStringAsync();
+
+        } catch(Exception e)
+        {
+            HttpStatusCode httpStatusCode = response.StatusCode;
+            var statusCodeInt = (int)httpStatusCode;
+            var errorStatusCode = Auth0StatusCodes($"{statusCodeInt}");
+
+            return $"Exception caught at Auth0: {statusCodeInt} - {errorStatusCode} - {e.ToString}";
+        }
+
+    }
+
+    private static async Task<AuthToken> GetTokenFromAuth()
+    {
+        try
+        {
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://dev-pa3bipmqjbfbdc4d.us.auth0.com/oauth/token"); // Replace "YOUR_API_URL" with your actual API URL
+                request.Content = new StringContent("{\"client_id\":\"bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B\",\"client_secret\":\"3O4ilQ71uKmdXM1g4H2-hWKbcuxD1NuiLNntx_oMtgoqTDeQi1P8BRtQ7c7b29y7\",\"audience\":\"https://dev-pa3bipmqjbfbdc4d.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}", System.Text.Encoding.UTF8, "application/json"); // Replace "" with your request content if needed
+
+                using (HttpResponseMessage response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    AuthToken responseToken = JsonConvert.DeserializeObject<AuthToken>(responseBody);
+                    return responseToken;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return null;
+        }
+    }
+
+    public class AuthToken
+    {
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+    }
+
+    private static string Auth0StatusCodes(string statusCode)
+    {
+        Dictionary<string, string> responseCodes = new Dictionary<string, string>();
+        responseCodes.Add("400", "Weak password or Invalid body request. Contact your administrator.");
+        responseCodes.Add("401", "Invalid token or Invalid signature recieved for JWT");
+        responseCodes.Add("403", "Forbidden");
+        responseCodes.Add("409", "User already exists");
+        responseCodes.Add("429", "Too many requests. Try again later");
+
+        if (responseCodes.ContainsKey(statusCode))
+        {
+            return responseCodes[statusCode];
+        }
+        else
+        {
+            return "Unknown status code";
+        }
+    }
+}

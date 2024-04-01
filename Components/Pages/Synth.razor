@@ -1,0 +1,29 @@
+﻿@page "/synth"
+@attribute [StreamRendering]
+
+<PageTitle>Synth</PageTitle>
+<h1>Amey's got synth</h1>
+
+@if (values == null)
+{
+    <p>Loading Random Values...</p>
+} else
+{
+    @foreach(var val in values)
+    {
+        <p>@val</p>
+    }
+}
+
+@code {
+    List<String> values = PopulateRandom();
+    public static List<String> PopulateRandom()
+    {
+        List<String> values = [];
+        for(int i = 0; i < 100; i++)
+        {
+            values.Add($"Value {i}");
+        }
+        return values;
+    }
+}
