@@ -44,3 +44,5 @@ C:\Users\ameysunu\Desktop\BlazorApp\bin\Debug\net8.0\Auth0.ManagementApi.dll
 C:\Users\ameysunu\Desktop\BlazorApp\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\ameysunu\Desktop\BlazorApp\bin\Debug\net8.0\RestSharp.dll
 C:\Users\ameysunu\Desktop\BlazorApp\obj\Debug\net8.0\BlazorApp.sourcelink.json
+C:\Users\ameysunu\Desktop\BlazorApp\bin\Debug\net8.0\Microsoft.AspNetCore.Server.Kestrel.Https.dll
+C:\Users\ameysunu\Desktop\BlazorApp\bin\Debug\net8.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll

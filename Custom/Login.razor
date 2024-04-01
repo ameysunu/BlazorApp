@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@inject IJSRuntime JS
 <PageTitle>Login</PageTitle>
 
 <div class="container">
@@ -47,6 +48,8 @@
         if (!string.IsNullOrEmpty(CodeParameter))
         {
             processRegistration = true;
+            // Still need to get the AuthToken from Auth0 for the user
+            JS.InvokeVoidAsync("localStorage.setItem", "authToken", CodeParameter);
         }
     }
 

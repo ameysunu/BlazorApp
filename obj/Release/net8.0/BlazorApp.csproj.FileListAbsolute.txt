@@ -44,3 +44,5 @@ C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\BlazorApp.pdb
 C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\BlazorApp.genruntimeconfig.cache
 C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\ref\BlazorApp.dll
 C:\Users\ameysunu\Desktop\BlazorApp\obj\Release\net8.0\BlazorApp.sourcelink.json
+C:\Users\ameysunu\Desktop\BlazorApp\bin\Release\net8.0\Microsoft.AspNetCore.Server.Kestrel.Https.dll
+C:\Users\ameysunu\Desktop\BlazorApp\bin\Release\net8.0\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll
