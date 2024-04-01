@@ -29,15 +29,28 @@
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
+    [Inject]
+    private IConfiguration Configuration { get; set; }
 
-    private async void _Login(){
+    private async void _Login()
+    {
         processRegistration = true;
-        var authorizeUrl = $"https://dev-pa3bipmqjbfbdc4d.us.auth0.com/authorize" +
-    $"?response_type=code" +
-    $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
-    $"&redirect_uri=https://ameyplayground.azurewebsites.net/login";
-        NavigationManager.NavigateTo(authorizeUrl);
-    }
+        if (Configuration["isSandbox"] != "true")
+        {
+            var authorizeUrl = $"https://dev-pa3bipmqjbfbdc4d.us.auth0.com/authorize" +
+        $"?response_type=code" +
+        $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
+        $"&redirect_uri=https://ameyplayground.azurewebsites.net/login";
+            NavigationManager.NavigateTo(authorizeUrl);
+        } else
+        {
+            var authorizeUrl = $"https://dev-pa3bipmqjbfbdc4d.us.auth0.com/authorize" +
+$"?response_type=code" +
+$"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
+    $"&redirect_uri=https://localhost:7134/login";
+            NavigationManager.NavigateTo(authorizeUrl);
+        }
+    } 
 
     protected override async void OnInitialized()
     {
