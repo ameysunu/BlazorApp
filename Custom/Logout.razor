@@ -1,0 +1,23 @@
+﻿@page "/logout"
+@inject IJSRuntime JSRuntime
+<h3>@logoutText</h3>
+
+
+
+@code {
+    string logoutText;
+
+    protected override async void OnInitialized()
+    {
+        logoutText = "Logging out.. Please wait.";
+        StateHasChanged();
+
+        var authToken = await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "authToken");
+        if(authToken == null)
+        {
+            logoutText = "You've logged out successfully!";
+            StateHasChanged();
+        }
+            
+    }
+}

@@ -1,40 +1,46 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+
 
 <h1>Welcome to Wellbeing!</h1>
 
-<p>Login or Register to continue.</p>
-
-@* <div>
-    <button class="btn btn-primary" @onclick="OnTapLogin">Login</button>
-    <button class="btn btn-primary" @onclick="OnRegisterTap">Registration</button>
-</div> *@
-<p>@loginSelected</p>
-
-
-@if (loginSelected)
+@if (isLogged)
 {
-    <p>Login</p>
+
 }
-else if (registerSelected)
+else
 {
-    <p>Register</p>
+    <p>Login or Register to continue.</p>
 }
 
 @code {
-    bool loginSelected = false;
-    bool registerSelected = false;
+    bool isLogged;
 
-    public void OnTapLogin()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        loginSelected = true;
-        registerSelected = false;
-        Console.WriteLine("Login tapped");
-    }
-
-    public void OnRegisterTap()
-    {
-        registerSelected = true;
-        loginSelected = false;
+        if (firstRender)
+        {
+            var authToken = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                if (authToken.Contains("ey"))
+                {
+                    Console.WriteLine("AuthToken retrieved from localStorage: " + authToken);
+                    isLogged = true;
+                    StateHasChanged();
+                }
+                else
+                {
+                    isLogged = false;
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                Console.WriteLine("AuthToken not found in localStorage.");
+                isLogged = false;
+            }
+        }
     }
 }
