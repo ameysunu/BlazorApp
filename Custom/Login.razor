@@ -11,10 +11,17 @@
 
     <button class="btn btn-primary" @onclick="_Login" disabled="@processRegistration">Secure Login with Auth0</button>
 
-    @if (!string.IsNullOrEmpty(CodeParameter))
+    @if (!string.IsNullOrEmpty(successMessage))
     {
         <div class="alert alert-success mt-3" role="alert">
-            Success! You're logged in. Redirecting to dashboard...
+            Login successful. Redirecting you to dashboard, if not you're not automatically redirected
+            <a href="/dashboard">click here</a>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @errorMessage
         </div>
     }
 
@@ -26,6 +33,10 @@
     private bool processRegistration = false;
     private bool codeExists = false;
     string CodeParameter;
+    string errorMessage;
+    string successMessage;
+    bool userAuthTokenInvoked;
+    string userAuthToken;
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
@@ -35,6 +46,8 @@
     private async void _Login()
     {
         processRegistration = true;
+
+
         if (Configuration["isSandbox"] != "true")
         {
             var authorizeUrl = $"https://dev-pa3bipmqjbfbdc4d.us.auth0.com/authorize" +
@@ -52,26 +65,60 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
         }
     } 
 
-    protected override async void OnInitialized()
+    protected override async void OnAfterRender(bool firstRender)
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
         CodeParameter = queryParams["code"];
 
-        if (!string.IsNullOrEmpty(CodeParameter))
+        if (firstRender && !string.IsNullOrEmpty(CodeParameter))
         {
             processRegistration = true;
-            var userAuthToken = await GetAuthToken(CodeParameter);
+            userAuthToken = await GetAuthToken(CodeParameter);
             if (userAuthToken != null)
             {
                 JS.InvokeVoidAsync("localStorage.setItem", "authToken", $"{userAuthToken}");
+                if (userAuthToken.Contains("ey"))
+                {
+                    successMessage = "true";
+                } else
+                {
+                    errorMessage = $"Login failed. {userAuthToken}";
+                }
+            } else
+            {
+                errorMessage = $"Login failed. The auth token retrieved was null";
             }
+            StateHasChanged();
+        }
+        else if (!string.IsNullOrEmpty(userAuthToken) && !string.IsNullOrEmpty(CodeParameter))
+        {
+            JS.InvokeVoidAsync("localStorage.setItem", "authToken", $"{userAuthToken}");
+        }
+    }
+
+    protected override async void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        CodeParameter = queryParams["code"];
+        if (!string.IsNullOrEmpty(CodeParameter))
+        {
+            processRegistration = true;
         }
     }
 
     private async Task<String> GetAuthToken(string code)
     {
+        string redirectUri;
         var tokenEndpoint = $"https://dev-pa3bipmqjbfbdc4d.us.auth0.com/oauth/token";
+        if (Configuration["isSandbox"] != "true")
+        {
+            redirectUri = "https://ameyplayground.azurewebsites.net/login";
+        } else
+        {
+            redirectUri = "https://localhost:7134/login";
+        }
 
         var requestContent = new FormUrlEncodedContent(new[]
         {
@@ -79,7 +126,7 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
             new KeyValuePair<string, string>("client_id", "bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B"),
             new KeyValuePair<string, string>("client_secret", "3O4ilQ71uKmdXM1g4H2-hWKbcuxD1NuiLNntx_oMtgoqTDeQi1P8BRtQ7c7b29y7"),
             new KeyValuePair<string, string>("code", code),
-            new KeyValuePair<string, string>("redirect_uri", "https://localhost:7134/login")
+            new KeyValuePair<string, string>("redirect_uri", $"https://ameyplayground.azurewebsites.net/login")
         });
 
         using (HttpClient httpClient = new HttpClient())
@@ -98,7 +145,6 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
             {
                 // Handle error
                 Console.WriteLine($"Error authenticating: {response.StatusCode}");
-                JS.InvokeVoidAsync("localStorage.setItem", "authToken", $"{response.StatusCode}");
                 return null;
             }
         }

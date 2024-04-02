@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\BlazorApp.csproj": {}
+    "C:\\Users\\AmeySunu.SPT\\Desktop\\BlazorApp\\BlazorApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\BlazorApp.csproj": {
+    "C:\\Users\\AmeySunu.SPT\\Desktop\\BlazorApp\\BlazorApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\BlazorApp.csproj",
+        "projectUniqueName": "C:\\Users\\AmeySunu.SPT\\Desktop\\BlazorApp\\BlazorApp.csproj",
         "projectName": "BlazorApp",
-        "projectPath": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\BlazorApp.csproj",
-        "packagesPath": "C:\\Users\\ameysunu\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ameysunu\\Desktop\\BlazorApp\\obj\\",
+        "projectPath": "C:\\Users\\AmeySunu.SPT\\Desktop\\BlazorApp\\BlazorApp.csproj",
+        "packagesPath": "C:\\Users\\AmeySunu.SPT\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\AmeySunu.SPT\\Desktop\\BlazorApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ameysunu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\AmeySunu.SPT\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -93,7 +93,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
