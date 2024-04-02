@@ -14,8 +14,8 @@
     @if (!string.IsNullOrEmpty(successMessage))
     {
         <div class="alert alert-success mt-3" role="alert">
-            Login successful. Redirecting you to dashboard, if not you're not automatically redirected
-            <a href="/dashboard">click here</a>
+            Login successful. Redirecting you to dashboard in @timeLeft, if you're not automatically redirected
+            <a href="/dashboard">click here.</a>
         </div>
     }
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -37,6 +37,8 @@
     string successMessage;
     bool userAuthTokenInvoked;
     string userAuthToken;
+    private System.Timers.Timer timer;
+    private int timeLeft = 5;
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
@@ -81,6 +83,11 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
                 if (userAuthToken.Contains("ey"))
                 {
                     successMessage = "true";
+                    timer = new System.Timers.Timer();
+                    timer.Interval = 1000;
+                    timer.AutoReset = true;
+                    timer.Elapsed += TimerElapsed;
+                    timer.Start();
                 } else
                 {
                     errorMessage = $"Login failed. {userAuthToken}";
@@ -95,6 +102,24 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
         {
             JS.InvokeVoidAsync("localStorage.setItem", "authToken", $"{userAuthToken}");
         }
+    }
+
+    private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (timeLeft > 0)
+        {
+            timeLeft--;
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            timer.Stop();
+            NavigationManager.NavigateTo("/dashboard");
+        }
+    }
+    public void Dispose()
+    {
+        timer.Dispose();
     }
 
     protected override async void OnInitialized()
@@ -126,7 +151,7 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
             new KeyValuePair<string, string>("client_id", "bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B"),
             new KeyValuePair<string, string>("client_secret", "3O4ilQ71uKmdXM1g4H2-hWKbcuxD1NuiLNntx_oMtgoqTDeQi1P8BRtQ7c7b29y7"),
             new KeyValuePair<string, string>("code", code),
-            new KeyValuePair<string, string>("redirect_uri", $"https://ameyplayground.azurewebsites.net/login")
+            new KeyValuePair<string, string>("redirect_uri", $"{redirectUri}")
         });
 
         using (HttpClient httpClient = new HttpClient())
