@@ -1,10 +1,17 @@
 ﻿@page "/logout"
 @inject IJSRuntime JSRuntime
-<h3>@logoutText</h3>
+
+
+<div class="alert alert-success mt-3" role="alert">
+    @logoutText
+</div>
 
 
 
 @code {
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
     string logoutText;
 
     protected override async void OnInitialized()
@@ -12,12 +19,23 @@
         logoutText = "Logging out.. Please wait.";
         StateHasChanged();
 
-        var authToken = await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "authToken");
-        if(authToken == null)
+        var authTokenExists = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+
+        if (authTokenExists != null)
         {
-            logoutText = "You've logged out successfully!";
+
+            var authToken = await JSRuntime.InvokeAsync<string>("localStorage.removeItem", "authToken");
+            if (authToken == null)
+            {
+                logoutText = "You've logged out successfully!";
+                StateHasChanged();
+                NavigationManager.NavigateTo("/", forceLoad: true);
+            } 
+        } else
+        {
+            logoutText = "You need to login, in order to logout. So you're in the wrong place :)";
             StateHasChanged();
         }
-            
+
     }
 }

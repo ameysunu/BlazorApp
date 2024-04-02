@@ -2,6 +2,35 @@
 <PageTitle>Dashboard</PageTitle>
 <h1>Dashboard</h1>
 
+@if (waitToRefresh)
+{
+
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <h4 style="margin-right: 8px;">Loading dashboard, please wait</h4>
+        <Spinner Type="SpinnerType.Dots" Class="me-3" Color="SpinnerColor.Primary" />
+    </div>
+}
+
+
 @code {
+
+    string refreshToken;
+    bool waitToRefresh = false;
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        refreshToken = queryParams["refresh"];
+
+        if (firstRender && !string.IsNullOrEmpty(refreshToken))
+        {
+            waitToRefresh = true;
+            StateHasChanged();
+        }
+    }
 
 }

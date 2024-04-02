@@ -15,7 +15,7 @@
     {
         <div class="alert alert-success mt-3" role="alert">
             Login successful. Redirecting you to dashboard in @timeLeft, if you're not automatically redirected
-            <a href="/dashboard">click here.</a>
+            <a href="/dashboard?refresh=@DateTime.Now.Ticks">click here.</a>
         </div>
     }
     @if (!string.IsNullOrEmpty(errorMessage))
@@ -114,7 +114,7 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
         else
         {
             timer.Stop();
-            NavigationManager.NavigateTo("/dashboard");
+            NavigationManager.NavigateTo("/dashboard", forceLoad: true);
         }
     }
     public void Dispose()
