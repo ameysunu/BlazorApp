@@ -5,17 +5,59 @@
 
 <h1>Welcome to Wellbeing!</h1>
 
-@if (isLogged)
+@if (isCheckingAuth)
 {
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <Spinner Color="SpinnerColor.Primary" />
+    </div>
+} else 
+{
+    @if (isLogged)
+    {
+        <div class="row">
+            <div class="col">
+                <h4>Hi there @userInfo.Nickname </h4>
+            </div>
+            <div class="col text-end">
+                <p> You are logged in as: @userInfo.Email</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Login or Register to continue.</p>
+    }
+}
 
-}
-else
-{
-    <p>Login or Register to continue.</p>
-}
 
 @code {
     bool isLogged;
+    UserInfo userInfo;
+    bool isCheckingAuth = true;
+
+    public class UserInfo
+    {
+        [JsonProperty("sub")]
+        public string Subject { get; set; }
+
+        [JsonProperty("nickname")]
+        public string Nickname { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("picture")]
+        public string Picture { get; set; }
+
+        [JsonProperty("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("email_verified")]
+        public bool EmailVerified { get; set; }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -28,6 +70,7 @@ else
                 {
                     Console.WriteLine("AuthToken retrieved from localStorage: " + authToken);
                     isLogged = true;
+                    userInfo = await GetUserInfo(authToken);
                     StateHasChanged();
                 }
                 else
@@ -40,6 +83,36 @@ else
             {
                 Console.WriteLine("AuthToken not found in localStorage.");
                 isLogged = false;
+            }
+            isCheckingAuth = false;
+            StateHasChanged();
+        }
+    }
+
+    private static async Task<UserInfo> GetUserInfo(string accessToken)
+    {
+        var userinfoEndpoint = "https://dev-pa3bipmqjbfbdc4d.us.auth0.com/userinfo";
+
+        using (var httpClient = new HttpClient())
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await httpClient.GetAsync(userinfoEndpoint);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                dynamic userJson = JsonConvert.DeserializeObject(responseContent);
+
+                Console.WriteLine($"User retrieved as: {userJson}");
+
+                UserInfo userInfo = userJson.ToObject<UserInfo>();
+                return userInfo;
+            }
+            else
+            {
+                Console.WriteLine($"Error getting userinfo: {response.StatusCode}");
+                return null;
             }
         }
     }
