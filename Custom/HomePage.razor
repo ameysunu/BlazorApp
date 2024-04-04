@@ -46,9 +46,27 @@
             </div>
         }
     }
-    else
+
+    <p>Wellbeing is your health partner. You can track your moods, and improve your overall wellbeing. </p>
+    <br />
+    <h4>Features</h4>
+    <ul>
+        <li>Mood Tracking</li>
+        <li>Personalized Insights</li>
+        <li>Relaxation Techniques</li>
+        <li>Guided Meditation</li>
+        <li>Mental Health Resources</li>
+    </ul>
+    <br />
+
+    @if (isLogged)
     {
-        <p>Login or Register to continue.</p>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='/dashboard'">Go to Dashboard</button>
+    }
+
+    @if (!isLogged)
+    {
+        <h5>Login or Register to get started!</h5>
     }
 }
 
