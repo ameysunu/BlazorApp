@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using static BlazorApp.Custom.Register
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
 
@@ -22,10 +23,50 @@
                 <p> You are logged in as: @userInfo.Email</p>
             </div>
         </div>
+
+        @if (!userInfo.EmailVerified)
+        {
+            <div class="alert alert-warning" role="alert">
+                You're email is not verified.
+                <button type="button" @onclick="() => ResendEmailVerification(userInfo.Subject)" class="btn btn-light" disabled ="@emailVerificationSent">Verify now</button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(evError))
+        {
+            <div class="alert alert-danger" role="alert">
+                @evError
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(evSuccess))
+        {
+            <div class="alert alert-success" role="alert">
+                @evSuccess
+            </div>
+        }
     }
-    else
+
+    <p>Wellbeing is your health partner. You can track your moods, and improve your overall wellbeing. </p>
+    <br />
+    <h4>Features</h4>
+    <ul>
+        <li>Mood Tracking</li>
+        <li>Personalized Insights</li>
+        <li>Relaxation Techniques</li>
+        <li>Guided Meditation</li>
+        <li>Mental Health Resources</li>
+    </ul>
+    <br />
+
+    @if (isLogged)
     {
-        <p>Login or Register to continue.</p>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='/dashboard'">Go to Dashboard</button>
+    }
+
+    @if (!isLogged)
+    {
+        <h5>Login or Register to get started!</h5>
     }
 }
 
@@ -34,6 +75,9 @@
     bool isLogged;
     UserInfo userInfo;
     bool isCheckingAuth = true;
+    public static bool emailVerificationSent = false;
+    public static string evSuccess;
+    public static string evError;
 
     public class UserInfo
     {
@@ -63,6 +107,10 @@
     {
         if (firstRender)
         {
+            emailVerificationSent = false;
+            evSuccess = "";
+            evError = "";
+
             var authToken = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
             if (!string.IsNullOrEmpty(authToken))
             {
@@ -116,4 +164,41 @@
             }
         }
     }
+
+    public static async Task<bool> ResendEmailVerification(string userId)
+    {
+        emailVerificationSent = true;
+
+        try
+        {
+            var authToken = await GetTokenFromAuth();
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.access_token);
+
+                var content = new StringContent($"{{\"user_id\":\"{userId}\",\"client_id\":\"bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B\"}}", Encoding.UTF8, "application/json");
+
+                using (var response = await client.PostAsync("https://dev-pa3bipmqjbfbdc4d.us.auth0.com/api/v2/jobs/verification-email", content))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(responseContent);
+                    evSuccess = "Verification email has been successfully sent.";
+
+
+                    return true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            emailVerificationSent = false;
+            Console.WriteLine($"Error: {ex.Message}");
+            evError = $"Error: {ex.Message}";
+            return false;
+        }
+    }
+
 }
