@@ -137,7 +137,7 @@
         }
     }
 
-    private static async Task<UserInfo> GetUserInfo(string accessToken)
+    public static async Task<UserInfo> GetUserInfo(string accessToken)
     {
         var userinfoEndpoint = "https://dev-pa3bipmqjbfbdc4d.us.auth0.com/userinfo";
 
