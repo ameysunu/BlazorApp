@@ -24,6 +24,12 @@
             @errorMessage
         </div>
     }
+    @if (!string.IsNullOrEmpty(authMessage))
+    {
+        <div class="alert alert-info mt-3" role="alert">
+            Please wait, authenticating from Auth0. Do not click refresh or go back.
+        </div>
+    }
 
 </div>
 
@@ -39,6 +45,8 @@
     string userAuthToken;
     private System.Timers.Timer timer;
     private int timeLeft = 5;
+    HomePage.UserInfo userInfo;
+    string authMessage;
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
@@ -82,9 +90,18 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
             if (userAuthToken != null)
             {
                 JS.InvokeVoidAsync("localStorage.setItem", "authToken", $"{userAuthToken}");
+
                 if (userAuthToken.Contains("ey"))
                 {
+                    authMessage = "true";
+                    StateHasChanged();
+                    userInfo = await HomePage.GetUserInfo(userAuthToken);
+                    Container userContainer = await CosmosOperations.ConnectToCosmosUserDB();
+                    await CosmosOperations.CreateUser(userContainer, userInfo.Email, userInfo.Nickname, userInfo.Picture, userInfo.Subject);
+
+                    authMessage = "";
                     successMessage = "true";
+                    StateHasChanged();
                     timer = new System.Timers.Timer();
                     timer.Interval = 1000;
                     timer.AutoReset = true;

@@ -16,27 +16,21 @@
 @code {
 
     string refreshToken;
-    bool waitToRefresh = true;
-    HomePage.UserInfo userInfo;
+    bool waitToRefresh = false;
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        if (firstRender)
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        refreshToken = queryParams["refresh"];
+
+        if (firstRender && !string.IsNullOrEmpty(refreshToken))
         {
-            var authToken = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
-            userInfo = await HomePage.GetUserInfo(authToken);
-
-            if (userInfo != null)
-            {
-                Container userContainer = await CosmosOperations.ConnectToCosmosUserDB();
-                await CosmosOperations.CreateUser(userContainer, userInfo.Email, userInfo.Nickname, userInfo.Picture, userInfo.Subject);
-
-                waitToRefresh = false;
-                StateHasChanged();
-            }
+            waitToRefresh = true;
+            StateHasChanged();
         }
     }
 
