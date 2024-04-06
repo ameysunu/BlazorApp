@@ -12,31 +12,37 @@
     </div>
 }
 
+<br />
+<br />
+<div class="card" style="background-color: #FFDFCA;">
+    <div class="card-body">
+        <h4 class="card-title">Daily Mood</h4>
+        <p class="card-text">You have'nt logged any mood today.</p>
+        <br />
+        <button type="button" onclick="window.location.href='/mood-tracking'" class="btn btn-primary">Click to log</button>
+
+    </div>
+</div>
+
 
 @code {
 
     string refreshToken;
-    bool waitToRefresh = true;
-    HomePage.UserInfo userInfo;
+    bool waitToRefresh = false;
 
     [Inject]
     NavigationManager NavigationManager { get; set; }
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        if (firstRender)
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        refreshToken = queryParams["refresh"];
+
+        if (firstRender && !string.IsNullOrEmpty(refreshToken))
         {
-            var authToken = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
-            userInfo = await HomePage.GetUserInfo(authToken);
-
-            if (userInfo != null)
-            {
-                Container userContainer = await CosmosOperations.ConnectToCosmosUserDB();
-                await CosmosOperations.CreateUser(userContainer, userInfo.Email, userInfo.Nickname, userInfo.Picture, userInfo.Subject);
-
-                waitToRefresh = false;
-                StateHasChanged();
-            }
+            waitToRefresh = true;
+            StateHasChanged();
         }
     }
 
