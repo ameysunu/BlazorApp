@@ -1,0 +1,121 @@
+﻿@inject IJSRuntime JSRuntime
+
+<br />
+<br />
+
+<h4> Select how you're feeling right now: </h4>
+<br />
+<h1 class="text-center"> @emoji </h1>
+<input type="range" class="form-range" min="0" max="15" step="2.5" id="moodRange" @oninput="GetMoodValue" >
+<div class="d-flex justify-content-between">
+    <span>Great</span>
+    <span>Not Great</span>
+</div>
+
+@if (!nextTapped)
+{
+    <br />
+    <button class="btn btn-primary" @onclick="() => NextTapped()">Next</button>
+} else
+{
+    <br />
+    <div class="alert alert-primary" role="alert">
+        What influenced you to feel this way?
+    </div>
+    <br />
+    <textarea class="form-control" id="moodReason" rows="8" @bind="MoodReasonValue"></textarea>
+    <br />
+    <button type="button" @onclick="() => SubmitMood()" disabled=@isSubmitted class=" btn btn-primary">Submit</button>
+    <br />
+    <br />
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @successMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
+
+
+}
+
+
+@code {
+    private double selectedMood = 0;
+    private string emoji;
+    private bool nextTapped;
+    private string MoodReasonValue { get; set; }
+    public HomePage.UserInfo userInfo;
+    private string successMessage;
+    private string errorMessage;
+    private bool isSubmitted = false;
+
+
+    private void NextTapped()
+    {
+        nextTapped = true;
+    }
+
+    private void GetMoodValue(ChangeEventArgs e)
+    {
+        selectedMood = Convert.ToDouble(e.Value);
+        ShowEmojiPerMood(selectedMood);
+    }
+
+    private void ShowEmojiPerMood(Double mood)
+    {
+        if(mood >= 0  && mood < 2.5)
+        {
+            emoji = "😍";
+        }else if(mood > 2.5 && mood < 4.5)
+        {
+            emoji = "😄";
+        } else if(mood > 4.5 && mood < 6.5)
+        {
+            emoji = "🙂";
+        } else if(mood > 6.5 && mood < 8.5)
+        {
+            emoji = "😞";
+        } else if(mood > 8.5 && mood < 10.5)
+        {
+            emoji = "😭";
+        } else if (mood > 10.5 && mood < 12.5)
+        {
+            emoji = "😨";
+        } else if (mood > 12.5 && mood < 14.5)
+        {
+            emoji = "😡";
+        } else if (mood > 14.5)
+        {
+            emoji = "😤";
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task SubmitMood()
+    {
+        isSubmitted = true;
+
+        var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+        var createdMood = await CosmosOperations.CreateMood(selectedMood, MoodReasonValue, userId);
+
+        if (createdMood)
+        {
+            successMessage = "Mood has been created successfully!";
+            StateHasChanged();
+        } else
+        {
+            isSubmitted = false;
+            errorMessage = "An error has occured while trying to create the mood";
+            StateHasChanged();
+        }
+    }
+}
