@@ -71,5 +71,47 @@ namespace BlazorApp.Custom.Controllers
             return queryResponse.Any() && queryResponse.First() > 0;
         }
 
+        public static async Task<Container> GetCosmosContainer(String containerId)
+        {
+            var configuration = new ConfigurationBuilder()
+     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+     .Build();
+            string connectionString = configuration["CosmosConnectionString"];
+            string databaseId = configuration["CosmosDB"];
+
+
+            var cosmosOperations = new CosmosOperations(connectionString);
+            Container container = await cosmosOperations.InitializeUserDatabaseAndContainerAsync(databaseId, containerId);
+
+            return container;
+
+        }
+
+        public static async Task<bool> CreateMood(Double mood_value, String moodReason, String userInfo)
+        {
+            var container = await GetCosmosContainer("moods");
+
+            dynamic newItem = new
+            {
+                id = Guid.NewGuid().ToString(),
+                created_at = DateTime.UtcNow,
+                user_id = userInfo,
+                mood = mood_value,
+                mood_reason = moodReason,
+            };
+
+            try
+            {
+                await container.CreateItemAsync(newItem);
+                Console.WriteLine("Mood written");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
     }
 }

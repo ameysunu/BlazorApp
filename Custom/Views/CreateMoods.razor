@@ -1,4 +1,5 @@
-﻿
+﻿@inject IJSRuntime JSRuntime
+
 <br />
 <br />
 
@@ -24,9 +25,25 @@
     <br />
     <textarea class="form-control" id="moodReason" rows="8" @bind="MoodReasonValue"></textarea>
     <br />
-    <button type="button" class="btn btn-primary">Submit</button>
+    <button type="button" @onclick="() => SubmitMood()" disabled=@isSubmitted class=" btn btn-primary">Submit</button>
     <br />
     <br />
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @successMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
+
+
 }
 
 
@@ -35,6 +52,11 @@
     private string emoji;
     private bool nextTapped;
     private string MoodReasonValue { get; set; }
+    public HomePage.UserInfo userInfo;
+    private string successMessage;
+    private string errorMessage;
+    private bool isSubmitted = false;
+
 
     private void NextTapped()
     {
@@ -76,5 +98,24 @@
         }
 
         StateHasChanged();
+    }
+
+    private async Task SubmitMood()
+    {
+        isSubmitted = true;
+
+        var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+        var createdMood = await CosmosOperations.CreateMood(selectedMood, MoodReasonValue, userId);
+
+        if (createdMood)
+        {
+            successMessage = "Mood has been created successfully!";
+            StateHasChanged();
+        } else
+        {
+            isSubmitted = false;
+            errorMessage = "An error has occured while trying to create the mood";
+            StateHasChanged();
+        }
     }
 }

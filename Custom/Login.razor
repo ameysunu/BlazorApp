@@ -97,6 +97,9 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
                     StateHasChanged();
 
                     userInfo = await HomePage.GetUserInfo(userAuthToken);
+                    JS.InvokeVoidAsync("localStorage.setItem", "userId", $"{userInfo.Subject}");
+
+
                     Container userContainer = await CosmosOperations.ConnectToCosmosUserDB();
                     var userExistsInCosmos = await CosmosOperations.CheckIfUserExists(userContainer, userInfo.Subject);
 
