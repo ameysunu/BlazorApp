@@ -59,5 +59,17 @@ namespace BlazorApp.Custom.Controllers
             }
         }
 
+        public static async Task<bool> CheckIfUserExists(Container container, String userId)
+        {
+
+            var query = new QueryDefinition($"SELECT VALUE COUNT(1) FROM c WHERE c.user_id = @PropertyValue")
+                .WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<int>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            return queryResponse.Any() && queryResponse.First() > 0;
+        }
+
     }
 }

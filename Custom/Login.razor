@@ -95,9 +95,15 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
                 {
                     authMessage = "true";
                     StateHasChanged();
+
                     userInfo = await HomePage.GetUserInfo(userAuthToken);
                     Container userContainer = await CosmosOperations.ConnectToCosmosUserDB();
-                    await CosmosOperations.CreateUser(userContainer, userInfo.Email, userInfo.Nickname, userInfo.Picture, userInfo.Subject);
+                    var userExistsInCosmos = await CosmosOperations.CheckIfUserExists(userContainer, userInfo.Subject);
+
+                    if (!userExistsInCosmos)
+                    {
+                        await CosmosOperations.CreateUser(userContainer, userInfo.Email, userInfo.Nickname, userInfo.Picture, userInfo.Subject);
+                    }
 
                     authMessage = "";
                     successMessage = "true";
