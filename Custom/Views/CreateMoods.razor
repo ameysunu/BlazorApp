@@ -1,0 +1,80 @@
+﻿
+<br />
+<br />
+
+<h4> Select how you're feeling right now: </h4>
+<br />
+<h1 class="text-center"> @emoji </h1>
+<input type="range" class="form-range" min="0" max="15" step="2.5" id="moodRange" @oninput="GetMoodValue" >
+<div class="d-flex justify-content-between">
+    <span>Great</span>
+    <span>Not Great</span>
+</div>
+
+@if (!nextTapped)
+{
+    <br />
+    <button class="btn btn-primary" @onclick="() => NextTapped()">Next</button>
+} else
+{
+    <br />
+    <div class="alert alert-primary" role="alert">
+        What influenced you to feel this way?
+    </div>
+    <br />
+    <textarea class="form-control" id="moodReason" rows="8" @bind="MoodReasonValue"></textarea>
+    <br />
+    <button type="button" class="btn btn-primary">Submit</button>
+    <br />
+    <br />
+}
+
+
+@code {
+    private double selectedMood = 0;
+    private string emoji;
+    private bool nextTapped;
+    private string MoodReasonValue { get; set; }
+
+    private void NextTapped()
+    {
+        nextTapped = true;
+    }
+
+    private void GetMoodValue(ChangeEventArgs e)
+    {
+        selectedMood = Convert.ToDouble(e.Value);
+        ShowEmojiPerMood(selectedMood);
+    }
+
+    private void ShowEmojiPerMood(Double mood)
+    {
+        if(mood >= 0  && mood < 2.5)
+        {
+            emoji = "😍";
+        }else if(mood > 2.5 && mood < 4.5)
+        {
+            emoji = "😄";
+        } else if(mood > 4.5 && mood < 6.5)
+        {
+            emoji = "🙂";
+        } else if(mood > 6.5 && mood < 8.5)
+        {
+            emoji = "😞";
+        } else if(mood > 8.5 && mood < 10.5)
+        {
+            emoji = "😭";
+        } else if (mood > 10.5 && mood < 12.5)
+        {
+            emoji = "😨";
+        } else if (mood > 12.5 && mood < 14.5)
+        {
+            emoji = "😡";
+        } else if (mood > 14.5)
+        {
+            emoji = "😤";
+        }
+
+        StateHasChanged();
+    }
+}
