@@ -18,11 +18,12 @@
 @if(activeTab == 0)
 {
     <div>
-        <div class="card">
-            <div class="card-body">
-                Your daily moods.
-            </div>
+        <h3>Your daily moods</h3>
+        <br />
+        <div class="alert alert-primary" role="alert">
+           These are your moods for today. You cannot edit/update a mood once, it's submitted.
         </div>
+        <PresentMoodsViewer />
     </div>
 } else if (activeTab == 1)
 {
@@ -33,10 +34,10 @@
 } else if(activeTab == 2)
 {
     <div>
-        <div class="card">
-            <div class="card-body">
-                All your submitted moods. PS: You cannot edit these moods, once submitted.
-            </div>
+        <h3>All moods</h3>
+        <br />
+        <div class="alert alert-primary" role="alert">
+           These are all your moods submitted throughout. These mood data help us in analyzing various mood factors.
         </div>
     </div>
 }
