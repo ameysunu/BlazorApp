@@ -1,0 +1,88 @@
+﻿<div class="card" style="background-color: #FFDFCA;">
+    <div class="card-body">
+        <h4 class="card-title">Daily Mood</h4>
+        @if (loader)
+        {
+            <div class="spinner-grow spinner-grow-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <br />
+
+        } else {
+        <h5>Your average mood: @moodMessage </h5>
+        <p class="card-text">@moodText</p>
+        }
+        <br />
+        <button type="button" onclick="window.location.href='/mood-tracking'" class="btn btn-primary">Click to log</button>
+
+    </div>
+</div>
+
+@code {
+@inject IJSRuntime JSRuntime
+    string moodMessage;
+    bool loader = true;
+    string moodText;
+
+    protected override async void OnInitialized()
+    {
+        moodMessage = await FetchMoodAverage();
+        moodText = MoodTextMapper(Double.Parse(moodMessage));
+        if (!string.IsNullOrEmpty(moodMessage) && !string.IsNullOrEmpty(moodText))
+        {
+            loader = false;
+            StateHasChanged();
+        }
+    }
+
+    public async Task<String> FetchMoodAverage()
+    {
+        var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+        var presentMoods = await CosmosOperations.GetPresentMoods(userId);
+        var moodCount = presentMoods.Count;
+        var totalMood = 0.0;
+
+        if (moodCount > 0)
+        {
+
+            foreach (var mood in presentMoods)
+            {
+
+                totalMood = totalMood + Double.Parse(mood.mood);
+            }
+
+            var averageMood = totalMood / moodCount;
+
+            return averageMood.ToString();
+        }
+
+        else return "You have'nt logged any mood today.";
+
+    }
+
+    public static string MoodTextMapper(double mood)
+    {
+        Dictionary<(double, double), string> moodTextMap = new Dictionary<(double, double), string>
+{
+    { (0.0, 2.5), "you're feeling blessed today." },
+    { (2.5, 4.5), "you're feeling joyful today." },
+    { (4.5, 6.5), "you're feeling content today." },
+    { (6.5, 8.5), "you're feeling sad today." },
+    { (8.5, 10.5), "you're feeling depressed today." },
+    { (10.5, 12.5), "you're feeling extremly down today." },
+    { (12.5, 14.5), "you're feeling anxious and angry today." },
+    { (14.5, 15.5), "you're extremly fuming today." }
+};
+
+        foreach (var moodRange in moodTextMap.Keys)
+        {
+            if (mood >= moodRange.Item1 && mood < moodRange.Item2)
+            {
+                return $"It seems like, {moodTextMap[moodRange]}";
+            }
+        }
+        return "Unknown mood";
+
+    }
+
+}
