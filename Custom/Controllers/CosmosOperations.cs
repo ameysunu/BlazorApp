@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using Auth0.ManagementApi.Models;
+using Microsoft.Azure.Cosmos;
 using System.Configuration;
 
 namespace BlazorApp.Custom.Controllers
@@ -29,7 +30,7 @@ namespace BlazorApp.Custom.Controllers
             string databaseId = configuration["CosmosDB"];
             string containerId = configuration["CosmosUserContainer"];
 
-           
+
             var cosmosOperations = new CosmosOperations(connectionString);
             Container container = await cosmosOperations.InitializeUserDatabaseAndContainerAsync(databaseId, containerId);
 
@@ -37,7 +38,7 @@ namespace BlazorApp.Custom.Controllers
 
         }
 
-        public static async Task CreateUser(Container container, String emailAdd, String nickName, String profilePic, String userId )
+        public static async Task CreateUser(Container container, String emailAdd, String nickName, String profilePic, String userId)
         {
             dynamic newItem = new
             {
@@ -51,9 +52,9 @@ namespace BlazorApp.Custom.Controllers
 
             try
             {
-               await container.CreateItemAsync(newItem);
+                await container.CreateItemAsync(newItem);
                 Console.WriteLine("User written to DB successfully");
-            } catch(Exception ex)
+            } catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
@@ -113,5 +114,107 @@ namespace BlazorApp.Custom.Controllers
             }
         }
 
+        public static async Task<List<Mood>> GetPresentMoods(String userId)
+        {
+            DateTime currentDate = DateTime.UtcNow;
+            string formattedCurrentDate = currentDate.ToString("yyyy-MM-dd");
+            List<Mood> presentMoodList = [];
+
+            var container = await GetCosmosContainer("moods");
+
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+                .WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Mood>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var mood in queryResponse)
+            {
+                DateTime createdAt = DateTime.Parse(mood.created_at);
+                string createdAtString = createdAt.ToString("yyyy-MM-dd");
+
+                if (createdAtString == formattedCurrentDate)
+                {
+                    presentMoodList.Add(mood);
+                }
+            }
+
+            return presentMoodList;
+
+        }
+
+        public static async Task<String> GetImagesFromMoodCosmos(double moodName)
+        {
+            Dictionary<double, string> moodEmojiMap = new Dictionary<double, string>
+            {
+                { 0, "happy" },
+                { 0.5, "happy" },
+                { 1, "happy" },
+                { 1.5, "happy" },
+                { 2, "happy" },
+                { 2.5, "smiley" },
+                { 3, "smiley" },
+                { 3.5, "smiley" },
+                { 4, "smiley" },
+                { 4.5, "neutral" },
+                { 5, "neutral" },
+                { 5.5, "neutral" },
+                { 6, "neutral" },
+                { 6.5, "tearman" },
+                { 7, "tearman" },
+                { 7.5, "tearman" },
+                { 8, "tearman" },
+                { 8.5, "tired" },
+                { 9, "tired" },
+                { 9.5, "tired" },
+                { 10, "tired" },
+                { 10.5, "tensed" },
+                { 11, "tensed" },
+                { 11.5, "tensed" },
+                { 12, "tensed" },
+                { 12.5, "angry" },
+                { 13, "angry" },
+                { 13.5, "angry" },
+                { 14, "angry" },
+                { 14.5, "giveup" },
+                { 15, "giveup" }
+            };
+
+            moodEmojiMap.TryGetValue(moodName, out string imageName);
+
+            var container = await GetCosmosContainer("moodimages");
+
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.name = @PropertyValue")
+                .WithParameter("@PropertyValue", imageName);
+
+            var queryIterator = container.GetItemQueryIterator<MoodImage>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var img in queryResponse)
+            {
+                return img.image;
+            }
+
+            return "";
+        }
+
+
+    }
+
+    public class MoodImage
+    {
+        public Guid id { get; set; }
+        public string name { get; set; }
+        public string image { get; set; }
+    }
+
+
+    public class Mood
+    {
+        public Guid id { get; set; }
+        public String created_at { get; set; }
+        public string user_id { get; set; }
+        public string mood_reason { get; set; }
+        public string mood { get; set; }
     }
 }

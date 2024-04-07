@@ -25,23 +25,53 @@
     <br />
     <textarea class="form-control" id="moodReason" rows="8" @bind="MoodReasonValue"></textarea>
     <br />
-    <button type="button" @onclick="() => SubmitMood()" disabled=@isSubmitted class=" btn btn-primary">Submit</button>
-    <br />
-    <br />
-
     @if (!string.IsNullOrEmpty(successMessage))
     {
-        <div class="alert alert-success" role="alert">
-            @successMessage
+        <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Success</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @successMessage
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="window.location.href='/mood-tracking'">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     }
 
     @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="alert alert-danger" role="alert">
-            @errorMessage
+        <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Error</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @errorMessage
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="window.location.href='/mood-tracking'">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     }
+
+    @if (!string.IsNullOrEmpty(MoodReasonValue))
+    {
+        <button type="button" @onclick="() => SubmitMood()" disabled=@isSubmitted class=" btn btn-primary">Submit</button>
+    }
+
+    <br />
+    <br />
 
 
 }
