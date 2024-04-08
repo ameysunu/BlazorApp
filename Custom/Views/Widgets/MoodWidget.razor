@@ -24,19 +24,22 @@
     bool loader = true;
     string moodText;
 
-    protected override async void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        moodMessage = await FetchMoodAverage();
-
-        if (moodMessage.Any(char.IsDigit))
+        if (firstRender)
         {
-            moodText = MoodTextMapper(Double.Parse(moodMessage));
-        }
+            moodMessage = await FetchMoodAverage();
 
-        if (!string.IsNullOrEmpty(moodMessage))
-        {
-            loader = false;
-            StateHasChanged();
+            if (moodMessage.Any(char.IsDigit))
+            {
+                moodText = MoodTextMapper(Double.Parse(moodMessage));
+            }
+
+            if (!string.IsNullOrEmpty(moodMessage))
+            {
+                loader = false;
+                StateHasChanged();
+            }
         }
     }
 
