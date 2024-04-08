@@ -27,8 +27,13 @@
     protected override async void OnInitialized()
     {
         moodMessage = await FetchMoodAverage();
-        moodText = MoodTextMapper(Double.Parse(moodMessage));
-        if (!string.IsNullOrEmpty(moodMessage) && !string.IsNullOrEmpty(moodText))
+
+        if (moodMessage.Any(char.IsDigit))
+        {
+            moodText = MoodTextMapper(Double.Parse(moodMessage));
+        }
+
+        if (!string.IsNullOrEmpty(moodMessage))
         {
             loader = false;
             StateHasChanged();
