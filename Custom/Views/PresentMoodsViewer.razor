@@ -18,6 +18,7 @@ else
                     <div class="card-body">
                         <h5 class="card-title">@mood.value.mood</h5>
                         <p class="card-text">@mood.value.mood_reason</p>
+                        <button type="button" @onclick="() => DeleteTriggered(mood.value.id)" class="btn btn-danger">Delete</button>
                     </div>
                 </div>
             </div>
@@ -31,6 +32,38 @@ else
         </div>
     }
 
+    @if(isDeleteTriggered){
+
+    <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete</h1>
+                </div>
+                <div class="modal-body">
+                        
+                        @if (!string.IsNullOrEmpty(deletionMessage))
+                        {
+                            @deletionMessage
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="window.location.href='/mood-tracking'">Close</button>
+                            </div>
+                            
+                        } else
+                        {
+                           <p> Do you want to delete the selected mood? This action is irreversible. </p>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="window.location.href='/mood-tracking'">Close</button>
+                                <button type="button" class="btn btn-danger" @onclick="() => DeleteConfirmed()" disabled="@confirmDelete">Delete</button>
+                            </div>
+                        }
+                    </div>
+
+            </div>
+        </div>
+    </div>
+    }
+
 }
 
 
@@ -39,6 +72,10 @@ else
     public bool isLoading = true;
     public List<Mood> moods;
     public List<String> imageUrls = [];
+    public bool isDeleteTriggered = false;
+    public Guid moodId;
+    public string deletionMessage;
+    public bool confirmDelete = false;
 
 
     protected override async void OnAfterRender(bool firstRender)
@@ -57,6 +94,19 @@ else
            isLoading = false;
            StateHasChanged();
         }
+    }
+
+    private bool DeleteTriggered(Guid moodID)
+    {
+        isDeleteTriggered = true;
+        moodId = moodID;
+        return isDeleteTriggered;
+    }
+
+    public async Task DeleteConfirmed()
+    {
+        confirmDelete = true;
+        deletionMessage = await CosmosOperations.DeleteMoodFromCosmos(moodId);
     }
 
 }

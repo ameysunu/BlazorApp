@@ -217,6 +217,33 @@ namespace BlazorApp.Custom.Controllers
             return "";
         }
 
+        public static async Task<String> DeleteMoodFromCosmos(Guid moodId)
+        {
+            var container = await GetCosmosContainer("moods");
+
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.id = @PropertyValue")
+                .WithParameter("@PropertyValue", moodId.ToString());
+
+            var queryIterator = container.GetItemQueryIterator<Mood>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+            
+            foreach(var response in queryResponse)
+            {
+                try
+                {
+                    await container.DeleteItemAsync<Mood>(response.id.ToString(), PartitionKey.None);
+                    return "Succesfully deleted";
+                    
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return $"Error: {ex.Message}";
+                }
+            }
+
+            return "";
+        }
+
 
     }
 
