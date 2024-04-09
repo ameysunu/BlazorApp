@@ -1,0 +1,69 @@
+﻿<br />
+<br />
+
+@if (isLoading)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <Spinner Color="SpinnerColor.Primary" />
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var mood in moods.Select((value, index) => new { value, index }))
+        {
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="@imageUrls[mood.index]" class="card-img-top" alt="@mood.value.mood">
+                    <div class="card-body">
+                        <h5 class="card-title">@mood.value.mood</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary" id="createdDateTime">@FormatDateTime(mood.value.created_at)</h6>
+                        <p class="card-text">@mood.value.mood_reason</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (moods.Count == 0)
+    {
+        <div class="alert alert-primary" role="alert">
+            You have not logged any moods yet.
+        </div>
+    }
+
+}
+
+
+@code {
+    @inject IJSRuntime JS
+    public bool isLoading = true;
+    public List<Mood> moods;
+    public List<String> imageUrls = [];
+
+    public String FormatDateTime(String createdAt)
+    {
+        DateTime createdAtDateTime = DateTime.Parse(createdAt);
+        return createdAtDateTime.ToString("dddd, dd MMMM yyyy");
+    }
+
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var userId = await JS.InvokeAsync<String>("localStorage.getItem", "userId");
+            moods = await CosmosOperations.GetAllMoods(userId);
+
+            foreach (var mood in moods)
+            {
+                var imageUrl = await CosmosOperations.GetImagesFromMoodCosmos(Double.Parse(mood.mood));
+                imageUrls.Add(imageUrl);
+            }
+
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+}
