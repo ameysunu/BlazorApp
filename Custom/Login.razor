@@ -98,6 +98,7 @@ $"&client_id=bUPQBV3ZgatRowJgPIfpKQhnddlrjO8B" +
 
                     userInfo = await HomePage.GetUserInfo(userAuthToken);
                     JS.InvokeVoidAsync("localStorage.setItem", "userId", $"{userInfo.Subject}");
+                    JS.InvokeAsync<string>("localStorage.setItem", "tokenTTL", DateTime.Now);
 
 
                     Container userContainer = await CosmosOperations.ConnectToCosmosUserDB();

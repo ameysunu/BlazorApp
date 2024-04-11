@@ -78,6 +78,8 @@
     public static bool emailVerificationSent = false;
     public static string evSuccess;
     public static string evError;
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
 
     public class UserInfo
     {
@@ -117,9 +119,21 @@
                 if (authToken.Contains("ey"))
                 {
                     Console.WriteLine("AuthToken retrieved from localStorage: " + authToken);
-                    isLogged = true;
-                    userInfo = await GetUserInfo(authToken);
-                    StateHasChanged();
+
+                    var tokenTTL = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "tokenTTL");
+                    var timeDifference = DateTime.Now - DateTime.Parse(tokenTTL);
+
+                    bool ttlExpired = Math.Abs(timeDifference.TotalMinutes) > 3;
+
+                    if (!ttlExpired)
+                    {
+                        isLogged = true;
+                        userInfo = await GetUserInfo(authToken);
+                        StateHasChanged();
+                    } else
+                    {
+                        NavigationManager.NavigateTo("/logout");
+                    }
                 }
                 else
                 {

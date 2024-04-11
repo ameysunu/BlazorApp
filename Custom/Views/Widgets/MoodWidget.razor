@@ -13,7 +13,11 @@
         <p class="card-text">@moodText</p>
         }
         <br />
+        <div>
         <button type="button" onclick="window.location.href='/mood-tracking'" class="btn btn-primary">Click to log</button>
+            <button type="button" onclick="window.location.href='/personalization'" class="btn btn-primary" disabled="@personalizationAvailable">View Personalization</button>
+
+       </div>
 
     </div>
 </div>
@@ -23,6 +27,7 @@
     string moodMessage;
     bool loader = true;
     string moodText;
+    bool personalizationAvailable = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -33,6 +38,7 @@
             if (moodMessage.Any(char.IsDigit))
             {
                 moodText = MoodTextMapper(Double.Parse(moodMessage));
+                personalizationAvailable = false;
             }
 
             if (!string.IsNullOrEmpty(moodMessage))
