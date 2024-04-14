@@ -1,6 +1,20 @@
 ﻿@page "/journal-entry"
 @inject IJSRuntime JSRuntime
 
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+       @errorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
+
 <div class="input-group mb-3">
     <input type="text" class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1" @bind="headerValue">
 </div>
@@ -10,15 +24,51 @@
 <textarea class="form-control" id="journalData" rows="15" @bind="journalData"></textarea>
 
 <br />
-<button type="button" class="btn btn-success">Submit</button>
-
-@headerValue
+<button type="button" @onclick="() => SaveJournal()" class="btn btn-success" disabled="@submitPressed">Submit</button>
 
 
 @code {
 
     public string headerValue;
     public string journalData;
+    public string errorMessage;
+    public string successMessage;
+    public bool submitPressed = false; 
+
+    public async Task SaveJournal()
+    {
+        submitPressed = true;
+        if (headerValue == null)
+        {
+            errorMessage = "Title cannot be empty";
+            StateHasChanged();
+            submitPressed = false;
+            return;
+        }
+
+        if(journalData == null)
+        {
+            errorMessage = "Journal data cannot be empty";
+            StateHasChanged();
+            submitPressed = false;
+            return;
+        }
+
+        if(headerValue.Length > 0 && journalData.Length > 0)
+        {
+            errorMessage = "";
+            var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+            var journalCreated = await CosmosOperations.CreateJournal(headerValue, journalData, userId);
+            if (journalCreated)
+            {
+                successMessage = "Journal successfully created!";
+            } else {
+                errorMessage = "Failed to create journal";
+                submitPressed = false;
+            }
+            StateHasChanged();
+        }
+    }
 
 }
 
