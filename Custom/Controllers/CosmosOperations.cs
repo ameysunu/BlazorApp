@@ -270,6 +270,24 @@ namespace BlazorApp.Custom.Controllers
             }
         }
 
+        public static async Task<List<Journal>> GetJournals(String userId)
+        {
+            List<Journal> allJournals = [];
+
+            var container = await GetCosmosContainer("journals");
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+    .WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Journal>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var journal in queryResponse)
+            {
+                allJournals.Add(journal);
+            }
+
+            return allJournals;
+        }
 
     }
 
@@ -288,5 +306,14 @@ namespace BlazorApp.Custom.Controllers
         public string user_id { get; set; }
         public string mood_reason { get; set; }
         public string mood { get; set; }
+    }
+
+    public class Journal
+    {
+        public Guid id { get; set; }
+        public String created_at { get; set; }
+        public string user_id { get; set; }
+        public string title { get; set;}
+        public string journalData { get; set;}
     }
 }
