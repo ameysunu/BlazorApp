@@ -1,0 +1,24 @@
+﻿@page "/journal-entry"
+@inject IJSRuntime JSRuntime
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1" @bind="headerValue">
+</div>
+
+<br />
+<h3> What's on your mind?</h3>
+<textarea class="form-control" id="journalData" rows="15" @bind="journalData"></textarea>
+
+<br />
+<button type="button" class="btn btn-success">Submit</button>
+
+@headerValue
+
+
+@code {
+
+    public string headerValue;
+    public string journalData;
+
+}
+
