@@ -2,8 +2,132 @@
 @page "/myspace"
 <PageTitle> My Space </PageTitle>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <h1> What's happening? </h1>
 
+<p> Your overall mood for this month is as follows: </p>
+
+@if (isLoading)
+{
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <Spinner Color="SpinnerColor.Primary" />
+    </div>
+}
+else if(!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-info mt-3" role="alert">
+        @message
+    </div>
+}
+
+<div>
+    <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        let myChart;
+        window.createChart = (moodData, moodDates) => {
+            if (myChart) {
+                myChart.destroy();
+            }
+        var ctx = document.getElementById('myChart').getContext('2d');
+       
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: moodDates,
+                datasets: [{
+                    label: 'Mood Data',
+                    data: moodData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                    maintainAspectRatio: false
+                }
+        });
+    };
+    });
+
+</script>
+
 @code {
+    public string userId;
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+    List<Double> moodData = [];
+    List<String> moodDates = [];
+    bool isLoading = true;
+    string message;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userId = await JSRuntime.InvokeAsync<String>("localStorage.getItem", "userId");
+
+            if(userId != null)
+            {
+                moodData = await GetMonthlyMoods(userId);
+                if(moodData.Count > 0 && moodData != null)
+                {
+                    isLoading = false;
+                    await JSRuntime.InvokeVoidAsync("createChart", moodData, moodDates);
+                    StateHasChanged();
+                } else
+                {
+                    isLoading = false;
+                    message = "You haven't logged enough moods to see your chart.";
+                    StateHasChanged();
+                }
+
+            }
+        }
+    }
+
+    public async Task<List<Double>> GetMonthlyMoods(string userId)
+    {
+        var allMoods = await CosmosOperations.GetAllMoods(userId);
+
+        List<Double> monthlyMoods = [];
+
+        foreach(var mood in allMoods)
+        {
+            DateTime dateTime = DateTime.Parse(mood.created_at);
+            DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime endDate = startDate.AddMonths(1).AddDays(-1);
+
+            if(dateTime >= startDate && dateTime <= endDate)
+            {
+                monthlyMoods.Add(Double.Parse(mood.mood));
+                moodDates.Add(DateTime.Parse(mood.created_at).ToString("dd"));
+            }
+        }
+
+        return monthlyMoods;
+
+    }
 
 }
