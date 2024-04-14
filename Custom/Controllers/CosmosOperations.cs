@@ -244,6 +244,32 @@ namespace BlazorApp.Custom.Controllers
             return "";
         }
 
+        public static async Task<bool> CreateJournal(String title, String journalData, String userInfo)
+        {
+            var container = await GetCosmosContainer("journals");
+
+            dynamic newItem = new
+            {
+                id = Guid.NewGuid().ToString(),
+                created_at = DateTime.UtcNow,
+                title = title,
+                journalData = journalData,
+                user_id = userInfo,
+            };
+
+            try
+            {
+                await container.CreateItemAsync(newItem);
+                Console.WriteLine("Journal created");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
 
     }
 
