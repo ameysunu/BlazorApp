@@ -247,6 +247,8 @@ namespace BlazorApp.Custom.Controllers
         public static async Task<bool> CreateJournal(String title, String journalData, String userInfo)
         {
             var container = await GetCosmosContainer("journals");
+            //TEST
+            await GeminiController.GenerateJournalSummary(journalData);
 
             dynamic newItem = new
             {
