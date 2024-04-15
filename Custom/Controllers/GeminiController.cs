@@ -17,7 +17,7 @@ namespace BlazorApp.Custom.Controllers
                 {{
                     ""parts"": [
                         {{
-                            ""text"": ""Write a 50 word summary for the following: {journalData}""
+                            ""text"": ""Write a 50 word summary regarding {journalData}""
                         }}
                     ]
                 }}
@@ -38,8 +38,9 @@ namespace BlazorApp.Custom.Controllers
                 }
                 else
                 {
+                    string responseBody = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"Failed to call the API. Status code: {response.StatusCode}");
-                    return "Error";
+                    return "Error: " + responseBody;
                 }
             }
         } 
