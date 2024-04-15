@@ -328,5 +328,6 @@ namespace BlazorApp.Custom.Controllers
         public string user_id { get; set; }
         public string title { get; set;}
         public string journalData { get; set;}
+        public string summary { get; set;}
     }
 }
