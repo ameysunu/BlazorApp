@@ -244,32 +244,63 @@ namespace BlazorApp.Custom.Controllers
             return "";
         }
 
-        public static async Task<bool> CreateJournal(String title, String journalData, String userInfo)
+        public static async Task<String> CreateJournal(String title, String journalData, String userInfo)
         {
             var container = await GetCosmosContainer("journals");
+            
+            var summary = await GeminiController.GenerateJournalSummary(journalData);
 
-            dynamic newItem = new
+            if (summary != null)
             {
-                id = Guid.NewGuid().ToString(),
-                created_at = DateTime.UtcNow,
-                title = title,
-                journalData = journalData,
-                user_id = userInfo,
-            };
+                if (summary.Contains("Error"))
+                {
+                    return summary;
+                }
 
-            try
-            {
-                await container.CreateItemAsync(newItem);
-                Console.WriteLine("Journal created");
-                return true;
+                dynamic newItem = new
+                {
+                    id = Guid.NewGuid().ToString(),
+                    created_at = DateTime.UtcNow,
+                    title = title,
+                    journalData = journalData,
+                    user_id = userInfo,
+                    summary = summary
+                };
+
+                try
+                {
+                    await container.CreateItemAsync(newItem);
+                    Console.WriteLine("Journal created");
+                    return "Success";
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    return ex.ToString();
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
+
+            return "Error";
         }
 
+        public static async Task<List<Journal>> GetJournals(String userId)
+        {
+            List<Journal> allJournals = [];
+
+            var container = await GetCosmosContainer("journals");
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+    .WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Journal>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var journal in queryResponse)
+            {
+                allJournals.Add(journal);
+            }
+
+            return allJournals;
+        }
 
     }
 
@@ -288,5 +319,14 @@ namespace BlazorApp.Custom.Controllers
         public string user_id { get; set; }
         public string mood_reason { get; set; }
         public string mood { get; set; }
+    }
+
+    public class Journal
+    {
+        public Guid id { get; set; }
+        public String created_at { get; set; }
+        public string user_id { get; set; }
+        public string title { get; set;}
+        public string journalData { get; set;}
     }
 }

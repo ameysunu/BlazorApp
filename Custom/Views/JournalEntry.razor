@@ -38,6 +38,8 @@
     public async Task SaveJournal()
     {
         submitPressed = true;
+        errorMessage = "";
+
         if (headerValue == null)
         {
             errorMessage = "Title cannot be empty";
@@ -59,11 +61,11 @@
             errorMessage = "";
             var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
             var journalCreated = await CosmosOperations.CreateJournal(headerValue, journalData, userId);
-            if (journalCreated)
+            if (journalCreated.Contains("Success"))
             {
                 successMessage = "Journal successfully created!";
             } else {
-                errorMessage = "Failed to create journal";
+                errorMessage = journalCreated;
                 submitPressed = false;
             }
             StateHasChanged();

@@ -123,7 +123,7 @@
                     var tokenTTL = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "tokenTTL");
                     var timeDifference = DateTime.Now - DateTime.Parse(tokenTTL);
 
-                    bool ttlExpired = Math.Abs(timeDifference.TotalMinutes) > 3;
+                    bool ttlExpired = Math.Abs(timeDifference.TotalMinutes) > 30;
 
                     if (!ttlExpired)
                     {
