@@ -325,6 +325,34 @@ namespace BlazorApp.Custom.Controllers
             return journalData;
         }
 
+        public static async Task<String> DeleteJournalById(Guid journalId)
+        {
+            var container = await GetCosmosContainer("journals");
+
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.id = @PropertyValue")
+                .WithParameter("@PropertyValue", journalId.ToString());
+
+            var queryIterator = container.GetItemQueryIterator<Journal>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var response in queryResponse)
+            {
+                try
+                {
+                    await container.DeleteItemAsync<Journal>(response.id.ToString(), PartitionKey.None);
+                    return "Successfully deleted";
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return $"Error: {ex.Message}";
+                }
+            }
+
+            return "";
+        }
+
     }
 
     public class MoodImage

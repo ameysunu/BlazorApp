@@ -22,6 +22,13 @@
 
 @if (!string.IsNullOrEmpty(journalId) && journalData != null)
 {
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
+
     <h4>@journalData.title</h4>
     <p style="color:gray">@FormatDateTime(journalData.created_at)</p>
     <p>@journalData.summary</p>
@@ -30,7 +37,7 @@
     <br />
     <br />
     <br />
-    <button class="btn btn-danger" onclick="window.location.href='/journal-entry'">Delete journal</button>
+    <button class="btn btn-danger" disabled="@isDelete" @onclick="() => DeleteJournal(journalId)">Delete journal</button>
 } 
 else if(journalList.Count > 0)
 {
@@ -68,6 +75,8 @@ else if(journalList.Count > 0)
     NavigationManager NavigationManager { get; set; }
     public string journalId;
     public Journal journalData;
+    public string errorMessage;
+    public bool isDelete = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -103,6 +112,21 @@ else if(journalList.Count > 0)
     {
         DateTime createdAtDateTime = DateTime.Parse(createdAt);
         return createdAtDateTime.ToString("dddd, dd MMMM yyyy");
+    }
+
+    public async void DeleteJournal(String journalId)
+    {
+        isDelete = true;
+        var journalIdGuid = Guid.Parse(journalId);
+        var deleteJournal = await CosmosOperations.DeleteJournalById(journalIdGuid);
+        if (deleteJournal.Contains("Success"))
+        {
+            NavigationManager.NavigateTo("/journals", forceLoad: true);
+        } else
+        {
+            errorMessage = deleteJournal;
+        }
+        StateHasChanged();
     }
 
 }
