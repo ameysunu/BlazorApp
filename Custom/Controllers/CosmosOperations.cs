@@ -302,6 +302,57 @@ namespace BlazorApp.Custom.Controllers
             return allJournals;
         }
 
+        public static async Task<Journal> GetJournalById(String userId, string journalId)
+        {
+            Journal journalData = new Journal();
+
+            var container = await GetCosmosContainer("journals");
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+.WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Journal>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var journal in queryResponse)
+            {
+                if (journal.id.ToString() == journalId)
+                {
+                    journalData = journal;
+                    return journalData;
+                }
+            }
+
+            return journalData;
+        }
+
+        public static async Task<String> DeleteJournalById(Guid journalId)
+        {
+            var container = await GetCosmosContainer("journals");
+
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.id = @PropertyValue")
+                .WithParameter("@PropertyValue", journalId.ToString());
+
+            var queryIterator = container.GetItemQueryIterator<Journal>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var response in queryResponse)
+            {
+                try
+                {
+                    await container.DeleteItemAsync<Journal>(response.id.ToString(), PartitionKey.None);
+                    return "Successfully deleted";
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return $"Error: {ex.Message}";
+                }
+            }
+
+            return "";
+        }
+
     }
 
     public class MoodImage
@@ -328,5 +379,6 @@ namespace BlazorApp.Custom.Controllers
         public string user_id { get; set; }
         public string title { get; set;}
         public string journalData { get; set;}
+        public string summary { get; set;}
     }
 }
