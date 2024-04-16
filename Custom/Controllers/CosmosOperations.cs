@@ -302,6 +302,29 @@ namespace BlazorApp.Custom.Controllers
             return allJournals;
         }
 
+        public static async Task<Journal> GetJournalById(String userId, string journalId)
+        {
+            Journal journalData = new Journal();
+
+            var container = await GetCosmosContainer("journals");
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+.WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Journal>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var journal in queryResponse)
+            {
+                if (journal.id.ToString() == journalId)
+                {
+                    journalData = journal;
+                    return journalData;
+                }
+            }
+
+            return journalData;
+        }
+
     }
 
     public class MoodImage

@@ -20,8 +20,19 @@
     </div>
 }
 
-
-@if(journalList.Count > 0)
+@if (!string.IsNullOrEmpty(journalId) && journalData != null)
+{
+    <h4>@journalData.title</h4>
+    <p style="color:gray">@FormatDateTime(journalData.created_at)</p>
+    <p>@journalData.summary</p>
+    <br />
+    <p>@journalData.journalData</p>
+    <br />
+    <br />
+    <br />
+    <button class="btn btn-danger" onclick="window.location.href='/journal-entry'">Delete journal</button>
+} 
+else if(journalList.Count > 0)
 {
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach (var journal in journalList.Select((value, index) => new { value, index }))
@@ -36,6 +47,8 @@
                             <p>@journal.value.summary</p>
                             <footer class="blockquote-footer">@FormatDateTime(journal.value.created_at)</footer>
                         </blockquote>
+                        <br />
+                        <button type="button" onclick="window.location.href = '/journals?id=@journal.value.id'" class="btn btn-primary">View</button>
                     </div>
                 </div>
             </div>
@@ -46,24 +59,42 @@
     <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
         You have no journals. Create one to get started.
     </div>
-} 
+}
 
 @code {
     public bool isLoading = true;
     public List<Journal> journalList = [];
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    public string journalId;
+    public Journal journalData;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            journalId = queryParams["id"];
             var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
-            var allJournals = await CosmosOperations.GetJournals(userId);
 
-            foreach(var journals in allJournals)
+            if (firstRender && !string.IsNullOrEmpty(journalId))
             {
-                journalList.Add(journals);
+                journalData = await CosmosOperations.GetJournalById(userId, journalId);
+                isLoading = false;
             }
-            isLoading = false;
+            else
+            {
+
+                var allJournals = await CosmosOperations.GetJournals(userId);
+
+                foreach (var journals in allJournals)
+                {
+                    journalList.Add(journals);
+                }
+                isLoading = false;
+                StateHasChanged();
+            }
             StateHasChanged();
         }
     }
