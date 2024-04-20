@@ -29,11 +29,13 @@ else if(!string.IsNullOrEmpty(message))
     <br />
     <br />
     <h3>Monthly Mood Suggestions:</h3>
-    <p>You've been overall feeling like @moodSuggestion Here are some recommendations for you:</p>
+    <h6>You've been overall feeling like @moodSuggestion Here are some recommendations for you:</h6>
+
+    <br />
     
     @foreach (var rec in moodRecommendation)
     {
-        <p>@FormatBoldText(rec)</p>
+        <p>@(new MarkupString(FormatBoldText(rec)))</p>
     }
 }
 
