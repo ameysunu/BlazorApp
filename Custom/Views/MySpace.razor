@@ -24,6 +24,21 @@ else if(!string.IsNullOrEmpty(message))
     <canvas id="myChart" width="400" height="400"></canvas>
 </div>
 
+@if (showMoodSuggestion)
+{
+    <br />
+    <br />
+    <h3>Monthly Mood Suggestions:</h3>
+    <h6>You've been overall feeling like @moodSuggestion Here are some recommendations for you:</h6>
+
+    <br />
+    
+    @foreach (var rec in moodRecommendation)
+    {
+        <p>@(new MarkupString(FormatBoldText(rec)))</p>
+    }
+}
+
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
         let myChart;
@@ -81,6 +96,9 @@ else if(!string.IsNullOrEmpty(message))
     List<String> moodDates = [];
     bool isLoading = true;
     string message;
+    bool showMoodSuggestion = false;
+    string moodSuggestion = "";
+    string[] moodRecommendation = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -95,6 +113,10 @@ else if(!string.IsNullOrEmpty(message))
                 {
                     isLoading = false;
                     await JSRuntime.InvokeVoidAsync("createChart", moodData, moodDates);
+                    showMoodSuggestion = true;
+                    moodSuggestion = await MoodSuggestions();
+                    var recommendation = await GeminiController.GenerateMoodRecommendation(moodSuggestion);
+                    moodRecommendation = recommendation.Split('\n');
                     StateHasChanged();
                 } else
                 {
@@ -128,6 +150,32 @@ else if(!string.IsNullOrEmpty(message))
 
         return monthlyMoods;
 
+    }
+
+    public async Task<String> MoodSuggestions()
+    {
+        if (moodData != null)
+        {
+            return await GeminiController.GenerateMoodSuggestions(moodData);
+        } else
+        {
+            return "You haven't logged enough moods yet";
+        }
+    }
+
+    private string FormatBoldText(string text)
+    {
+        int startIdx = text.IndexOf("**");
+        if (startIdx == -1) return text;
+
+        int endIdx = text.IndexOf("**", startIdx + 2);
+        if (endIdx == -1) return text;
+
+        string before = text.Substring(0, startIdx);
+        string bold = text.Substring(startIdx + 2, endIdx - startIdx - 2);
+        string after = text.Substring(endIdx + 2);
+
+        return $"{before}<b>{bold}</b>{after}";
     }
 
 }
