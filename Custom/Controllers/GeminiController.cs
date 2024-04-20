@@ -7,28 +7,17 @@ namespace BlazorApp.Custom.Controllers
 {
     public class GeminiController
     {
-        public static async Task<String> GenerateJournalSummary(String journalData)
+
+        public static async Task<String> SendRequestToGemini(string payload)
         {
             var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
             String apiKey = configuration["GeminiAPIKey"];
             String Url = configuration["GeminiEndpoint"] + "?key=" + apiKey;
-            string jsonPayload = $@"
-        {{
-            ""contents"": [
-                {{
-                    ""parts"": [
-                        {{
-                            ""text"": ""Write a 50 word summary regarding {journalData}""
-                        }}
-                    ]
-                }}
-            ]
-        }}";
 
             using (HttpClient client = new HttpClient())
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, Url);
-                request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
 
                 HttpResponseMessage response = await client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
@@ -52,7 +41,57 @@ namespace BlazorApp.Custom.Controllers
                     return "Error: " + responseBody;
                 }
             }
-        } 
+        }
+        public static async Task<String> GenerateJournalSummary(String journalData)
+        {
+            string jsonPayload = $@"
+        {{
+            ""contents"": [
+                {{
+                    ""parts"": [
+                        {{
+                            ""text"": ""Write a 50 word summary regarding {journalData}""
+                        }}
+                    ]
+                }}
+            ]
+        }}";
+            return await SendRequestToGemini(jsonPayload);
+        }
+
+        public static async Task<String> GenerateMoodSuggestions(List<Double> moodData)
+        {
+            string jsonPayload = $@"
+        {{
+            ""contents"": [
+                {{
+                    ""parts"": [
+                        {{
+                            ""text"": ""Generate a mood suggestion 10 - 15 words sentence for the mood value: {moodData.Average()}, where on the scale of 0 to 15 - 0 being happiest and 15 being most unhappiest.""
+                        }}
+                    ]
+                }}
+            ]
+        }}";
+            return await SendRequestToGemini(jsonPayload);
+        }
+
+        public static async Task<String> GenerateMoodRecommendation(String text)
+        {
+            string jsonPayload = $@"
+        {{
+            ""contents"": [
+                {{
+                    ""parts"": [
+                        {{
+                            ""text"": ""I've been feeling {text}. Give me 10 recommendations of what I should do to improve my health?""
+                        }}
+                    ]
+                }}
+            ]
+        }}";
+            return await SendRequestToGemini(jsonPayload);
+        }
     }
 
     public class Response
