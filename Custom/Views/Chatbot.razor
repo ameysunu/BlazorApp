@@ -1,0 +1,54 @@
+﻿@page "/myspace/chatbot"
+@inject IJSRuntime JSRuntime
+
+<h3>Chat with Maya!</h3>
+<br />
+<h6>Who's Maya?</h6>
+<p>Maya is our mascot, and our AI bot who uses the power of Google Gemini to converse with you and provide you a feeling of safe space.</p>
+<br />
+<br />
+
+
+@foreach(var message in allMessages)
+{
+    if (message.StartsWith("Me"))
+    {
+        <span class="badge text-bg-success" >@message</span>
+    } else
+    {
+        <span class="badge text-bg-info">@message</span>
+    }
+    <br />
+}
+
+<div class="container" style="height: 40vh; display: flex; flex-direction: column; justify-content: flex-end; overflow-x: hidden;">
+    <div class="input-group">
+        <textarea class="form-control" aria-label="With textarea" @bind="currentText"></textarea>
+        <span class="input-group-text">
+            <button class="btn btn-outline-success" type="button" id="sendButton" @onclick="() => SendMessage()">Send</button>
+        </span>
+    </div>
+</div>
+
+
+@code {
+
+    public string currentText = "";
+    public List<String> myMessages = [];
+    public List<String> botMessages = [];
+
+    public List<String> allMessages = [];
+
+    public async Task SendMessage()
+    {
+        allMessages.Add($"Me: {currentText}");
+        var geminiResponse = await GeminiController.SendMessage(currentText);
+        if(geminiResponse != null)
+        {
+            allMessages.Add($"Maya: {geminiResponse}");
+        }
+        currentText = "";
+        StateHasChanged();
+    }
+
+}

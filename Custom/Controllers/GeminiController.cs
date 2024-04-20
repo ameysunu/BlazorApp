@@ -92,6 +92,23 @@ namespace BlazorApp.Custom.Controllers
         }}";
             return await SendRequestToGemini(jsonPayload);
         }
+
+        public static async Task<String> SendMessage(String text)
+        {
+            string jsonPayload = $@"
+        {{
+            ""contents"": [
+                {{
+                    ""parts"": [
+                        {{
+                            ""text"": ""{text}""
+                        }}
+                    ]
+                }}
+            ]
+        }}";
+            return await SendRequestToGemini(jsonPayload);
+        }
     }
 
     public class Response
