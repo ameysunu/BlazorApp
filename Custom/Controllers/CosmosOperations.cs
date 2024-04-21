@@ -353,6 +353,49 @@ namespace BlazorApp.Custom.Controllers
             return "";
         }
 
+        public static async Task<List<(String, String)>> GetAllMoodsForRecommendation(String userId)
+        {
+            DateTime currentDate = DateTime.UtcNow;
+            List<(String, String)> moodList = new List<(String, String)>();
+
+            var container = await GetCosmosContainer("moods");
+
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+                .WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Mood>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var mood in queryResponse)
+            {
+                moodList.Add((mood.mood, mood.mood_reason));
+            }
+
+            return moodList;
+
+        }
+
+        public static async Task<List<String>> GetAllJournalDataForRecommendation(String userId)
+        {
+            List<String> journalData = [];
+
+            var container = await GetCosmosContainer("journals");
+
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+                .WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Journal>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var journal in queryResponse)
+            {
+                journalData.Add((journal.journalData));
+            }
+
+            return journalData;
+
+        }
+
     }
 
     public class MoodImage

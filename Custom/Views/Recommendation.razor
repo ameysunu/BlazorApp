@@ -1,0 +1,87 @@
+﻿@page "/myspace/recommendation"
+@inject IJSRuntime JSRuntime
+
+<h3>Recommendation</h3>
+
+<br />
+
+<div class="d-flex justify-content-between align-items-center">
+    <p style="color: gray"> Last Refreshed: @dateTimeRefresh</p>
+    <div class="ml-auto">
+        <div class="mr-3"></div>
+        <button class="btn btn-primary" @onclick="() => RefreshRecommendations()" disabled ="@refreshRequested">Refresh Data</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(recommendation))
+{
+    <p>@recommendation</p>
+}
+
+
+@code {
+    string recommendation = "";
+    bool refreshRequested = false;
+    string dateTimeRefresh = "";
+
+    public async Task<String> RefreshRecommendations()
+    {
+        refreshRequested = true;
+        StateHasChanged();
+
+        var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+
+        var allMoods = await CosmosOperations.GetAllMoodsForRecommendation(userId);
+        var allJournals = await CosmosOperations.GetAllJournalDataForRecommendation(userId);
+
+        var allMoodsString = ConvertAllMoodsToString(allMoods);
+
+        var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+        using (HttpClient client = new HttpClient())
+        {
+            string url = configuration["RecommendationEngineUrl"];
+            string payload = $@"
+        {{
+           ""moodData"": ""{allMoodsString}"",
+           ""journalData"": ""{allJournals}"",
+        }}";
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                recommendation = await response.Content.ReadAsStringAsync();
+                refreshRequested = false;
+                dateTimeRefresh = FormatDateTime(DateTime.Now.ToString());
+                return recommendation;
+            } else
+            {
+                recommendation = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error has occurred with status code: {response.StatusCode}");
+                refreshRequested = false;
+                return recommendation;
+            }
+        }
+
+        return "";
+    }
+
+    public String FormatDateTime(String createdAt)
+    {
+        DateTime createdAtDateTime = DateTime.Parse(createdAt);
+        return createdAtDateTime.ToString("dddd, dd MMMM yyyy, hh:mm");
+    }
+
+    public static string ConvertAllMoodsToString(List<(string, string)> allMoods)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var mood in allMoods)
+        {
+            sb.Append($"({mood.Item1}, {mood.Item2})");
+        }
+        return sb.ToString();
+    }
+
+}
