@@ -1,0 +1,23 @@
+﻿@page "/myspace/recommendation"
+
+<h3>Recommendation</h3>
+
+<br />
+
+<div class="d-flex justify-content-between align-items-center">
+    <p style="color: gray"> Last Refreshed: 21/04/2024 8:00AM</p>
+    <div class="ml-auto">
+        <div class="mr-3"></div>
+        <button class="btn btn-primary" @onclick="() => RefreshRecommendations()">Refresh Data</button>
+    </div>
+</div>
+
+
+@code {
+
+    public static async Task RefreshRecommendations()
+    {
+
+    }
+
+}
