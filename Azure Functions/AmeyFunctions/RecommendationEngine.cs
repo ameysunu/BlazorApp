@@ -44,7 +44,10 @@ namespace AmeyFunctions
 
             log.LogInformation($"Mood Data was recieved as: {moodBuilder}, and Journal data is: {journalBuilder}");
 
-            var geminiResponse = await GeminiController.GenerateMoodSummary(moodBuilder, log);
+            var geminiResponseMood = await GeminiController.GenerateMoodSummary(moodBuilder, log);
+            var geminiResponseJournal = await GeminiController.GenerateMoodSummary(journalBuilder, log);
+
+            var geminiResponse = geminiResponseMood + "Journal Data Information: " + geminiResponseJournal;
 
             return new OkObjectResult(geminiResponse);
         }

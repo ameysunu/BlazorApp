@@ -75,6 +75,25 @@ namespace AmeyFunctions
             return await SendRequestToGemini(jsonPayload, log);
         }
 
+        public static async Task<String> GenerateJournalSummary(String journalData, ILogger log)
+        {
+            log.LogInformation("Initiating Journal Summary Process");
+            string jsonPayload = $@"
+        {{
+            ""contents"": [
+                {{
+                    ""parts"": [
+                        {{
+                            ""text"": ""{journalData}. Give me some tips and recommendations based on this data.""
+                        }}
+                    ]
+                }}
+            ]
+        }}";
+            log.LogInformation($"JSON Payload: {jsonPayload}");
+            return await SendRequestToGemini(jsonPayload, log);
+        }
+
 
     }
 }
