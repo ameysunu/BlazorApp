@@ -9,7 +9,15 @@
     <p style="color: gray"> Last Refreshed: @dateTimeRefresh</p>
     <div class="ml-auto">
         <div class="mr-3"></div>
-        <button class="btn btn-primary" @onclick="() => RefreshRecommendations()" disabled ="@refreshRequested">Refresh Data</button>
+        @if (!refreshRequested)
+        {
+            <button class="btn btn-primary" @onclick="() => RefreshRecommendations()">Refresh Data</button>
+        } else
+        {
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Refreshing</span>
+            </div>
+        }
     </div>
 </div>
 
@@ -18,11 +26,21 @@
     <p>@recommendation</p>
 }
 
+<br />
+<br />
+@if (refreshSent)
+{
+
+    <div class="alert alert-success" role="alert">
+        Your refreshed data has been requested. It will be available to you on your dashboard once we have it generated.
+    </div>
+}
 
 @code {
     string recommendation = "";
     bool refreshRequested = false;
     string dateTimeRefresh = "";
+    bool refreshSent = false;
 
     public async Task<String> RefreshRecommendations()
     {
@@ -44,25 +62,16 @@
         {{
            ""moodData"": ""{allMoodsString}"",
            ""journalData"": ""{allJournals}"",
+           ""userId"": ""{userId}""
         }}";
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
-            {
-                recommendation = await response.Content.ReadAsStringAsync();
-                refreshRequested = false;
-                dateTimeRefresh = FormatDateTime(DateTime.Now.ToString());
-                return recommendation;
-            } else
-            {
-                recommendation = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error has occurred with status code: {response.StatusCode}");
-                refreshRequested = false;
-                return recommendation;
-            }
+            refreshSent = true;
+            refreshRequested = false;
+            StateHasChanged();
         }
 
         return "";
