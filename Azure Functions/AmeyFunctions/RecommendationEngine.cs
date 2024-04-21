@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AmeyFunctions
 {
@@ -19,20 +20,48 @@ namespace AmeyFunctions
         {
             log.LogInformation("Recommendation Engine was called using POST Request");
 
-            string body = req.Query["body"];
+            string moodData = req.Query["moodData"];
+            string journalData = req.Query["journalData"];
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            body = data?.body;
+            moodData = data?.moodData;
+            journalData = data?.journalData;
 
-            if (string.IsNullOrEmpty(body))
+
+            if (string.IsNullOrEmpty(moodData))
             {
-                return new OkObjectResult("Request body was null");
+                return new OkObjectResult("Mood Data body was null");
             }
 
-            string responseMessage = $"Hi there, recommendation engine body was: {body}";
+            if(string.IsNullOrEmpty(journalData))
+            {
+                log.LogInformation("Journal data was empty");
+            }
 
-            return new OkObjectResult(responseMessage);
+            var moodBuilder = MoodQueryBuilder(moodData);
+            var journalBuilder = JournalQueryBuilder(journalData);
+
+            log.LogInformation($"Mood Data was recieved as: {moodBuilder}, and Journal data is: {journalBuilder}");
+
+            var geminiResponse = await GeminiController.GenerateMoodSummary(moodBuilder, log);
+
+            return new OkObjectResult(geminiResponse);
+        }
+        public static string MoodQueryBuilder(string mood)
+        {
+            string baseResponder = "This is the list of my moods depicted on scale of 0 - 15, where 0 being the happiest and 15 being the saddest or angriest";
+            baseResponder = baseResponder + mood;
+
+            return baseResponder;
+        }
+
+        public static string JournalQueryBuilder(string journal)
+        {
+            string baseResponder = "This is my Journal data throughout the days";
+            baseResponder = baseResponder + journal;
+
+            return baseResponder;
         }
     }
 }

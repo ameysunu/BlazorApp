@@ -34,13 +34,16 @@
         var allMoods = await CosmosOperations.GetAllMoodsForRecommendation(userId);
         var allJournals = await CosmosOperations.GetAllJournalDataForRecommendation(userId);
 
+        var allMoodsString = ConvertAllMoodsToString(allMoods);
+
         var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
         using (HttpClient client = new HttpClient())
         {
             string url = configuration["RecommendationEngineUrl"];
             string payload = $@"
         {{
-           ""body"": ""Tests""
+           ""moodData"": ""{allMoodsString}"",
+           ""journalData"": ""{allJournals}"",
         }}";
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -55,7 +58,7 @@
                 return recommendation;
             } else
             {
-                string recommendation = await response.Content.ReadAsStringAsync();
+                recommendation = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Error has occurred with status code: {response.StatusCode}");
                 refreshRequested = false;
                 return recommendation;
@@ -69,6 +72,16 @@
     {
         DateTime createdAtDateTime = DateTime.Parse(createdAt);
         return createdAtDateTime.ToString("dddd, dd MMMM yyyy, hh:mm");
+    }
+
+    public static string ConvertAllMoodsToString(List<(string, string)> allMoods)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var mood in allMoods)
+        {
+            sb.Append($"({mood.Item1}, {mood.Item2})");
+        }
+        return sb.ToString();
     }
 
 }
