@@ -12,12 +12,43 @@
     </div>
 </div>
 
+@if (!string.IsNullOrEmpty(recommendation))
+{
+    <p>@recommendation</p>
+}
+
 
 @code {
+    string recommendation = "";
 
-    public static async Task RefreshRecommendations()
+    public async Task<String> RefreshRecommendations()
     {
+        var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+        using (HttpClient client = new HttpClient())
+        {
+            string url = configuration["RecommendationEngineUrl"];
+            string payload = $@"
+        {{
+           ""body"": ""Tests""
+        }}";
 
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                recommendation = await response.Content.ReadAsStringAsync();
+                return recommendation;
+            } else
+            {
+                string recommendation = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error has occurred with status code: {response.StatusCode}");
+                return recommendation;
+            }
+        }
+
+        return "";
     }
 
 }
