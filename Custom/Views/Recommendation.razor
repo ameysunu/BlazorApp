@@ -21,9 +21,22 @@
     </div>
 </div>
 
-@if (!string.IsNullOrEmpty(recommendation))
+<br />
+
+@if(isLoading)
 {
-    <p>@recommendation</p>
+
+    <div class="d-flex justify-content-center align-items-center">
+        <Spinner Color="SpinnerColor.Primary" />
+    </div>
+}
+
+@if(recommendation != null)
+{
+    <p>@recommendation.journal_recommendation</p>
+} else
+{
+    <p> You have no recommendations. You can request for a new one once you've put in your mood data or your journals</p>
 }
 
 <br />
@@ -37,10 +50,30 @@
 }
 
 @code {
-    string recommendation = "";
     bool refreshRequested = false;
     string dateTimeRefresh = "";
     bool refreshSent = false;
+    BlazorApp.Custom.Controllers.Recommendation recommendation = new BlazorApp.Custom.Controllers.Recommendation();
+    bool isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+            recommendation = await CosmosOperations.GetRecommendationByUserId(userId);
+            if (recommendation != null)
+            {
+                dateTimeRefresh = FormatDateTime(recommendation.created_at);
+            } else
+            {
+                dateTimeRefresh = "Never refreshed";
+            }
+            isLoading = false;
+        }
+
+        StateHasChanged();
+    }
 
     public async Task<String> RefreshRecommendations()
     {

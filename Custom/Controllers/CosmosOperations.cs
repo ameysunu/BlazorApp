@@ -1,5 +1,6 @@
 ﻿using Auth0.ManagementApi.Models;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using System.Configuration;
 
 namespace BlazorApp.Custom.Controllers
@@ -396,6 +397,24 @@ namespace BlazorApp.Custom.Controllers
 
         }
 
+        public static async Task<Recommendation> GetRecommendationByUserId(String userId)
+        {
+
+            var container = await GetCosmosContainer("recommendations");
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.user_id = @PropertyValue")
+    .WithParameter("@PropertyValue", userId);
+
+            var queryIterator = container.GetItemQueryIterator<Recommendation>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            if (queryResponse.Count > 0)
+            {
+                return queryResponse.First();
+            }
+
+            return null;
+        }
+
     }
 
     public class MoodImage
@@ -423,5 +442,14 @@ namespace BlazorApp.Custom.Controllers
         public string title { get; set;}
         public string journalData { get; set;}
         public string summary { get; set;}
+    }
+
+    public class Recommendation
+    {
+        public Guid id { get; set; }
+        public string created_at { get; set; }
+        public string user_id { get; set; }
+        public string mood_recommendation { get; set; }
+        public string journal_recommendation { get; set; }
     }
 }
