@@ -22,12 +22,13 @@ namespace AmeyFunctions
 
             string moodData = req.Query["moodData"];
             string journalData = req.Query["journalData"];
+            string userId = req.Query["userId"];
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             moodData = data?.moodData;
             journalData = data?.journalData;
-
+            userId = data?.userId;
 
             if (string.IsNullOrEmpty(moodData))
             {
@@ -47,9 +48,9 @@ namespace AmeyFunctions
             var geminiResponseMood = await GeminiController.GenerateMoodSummary(moodBuilder, log);
             var geminiResponseJournal = await GeminiController.GenerateMoodSummary(journalBuilder, log);
 
-            var geminiResponse = geminiResponseMood + "Journal Data Information: " + geminiResponseJournal;
+            await CosmosController.CheckIfRecommendationExistsOrCreateAsync(userId, geminiResponseMood, geminiResponseJournal, log);
 
-            return new OkObjectResult(geminiResponse);
+            return new OkObjectResult("Successfully generated!");
         }
         public static string MoodQueryBuilder(string mood)
         {

@@ -35,4 +35,13 @@ namespace AmeyFunctions
         public string category { get; set; }
         public string probability { get; set; }
     }
+
+    public class Recommendation
+    {
+       public Guid id { get; set; }
+       public string created_at { get; set; }
+       public string user_id { get; set;}
+       public string mood_recommendation { get; set;}
+       public string journal_recommendation { get; set; }
+    }
 }
