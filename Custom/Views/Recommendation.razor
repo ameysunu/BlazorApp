@@ -86,6 +86,7 @@
         var allJournals = await CosmosOperations.GetAllJournalDataForRecommendation(userId);
 
         var allMoodsString = ConvertAllMoodsToString(allMoods);
+        var allJournalsString = ConvertAllJournalsToString(allJournals);
 
         var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
         using (HttpClient client = new HttpClient())
@@ -94,7 +95,7 @@
             string payload = $@"
         {{
            ""moodData"": ""{allMoodsString}"",
-           ""journalData"": ""{allJournals}"",
+           ""journalData"": ""{allJournalsString}"",
            ""userId"": ""{userId}""
         }}";
 
@@ -122,6 +123,16 @@
         foreach (var mood in allMoods)
         {
             sb.Append($"({mood.Item1}, {mood.Item2})");
+        }
+        return sb.ToString();
+    }
+
+    public static string ConvertAllJournalsToString(List<string> allJournals)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach(var journal in allJournals)
+        {
+            sb.Append($"{journal}, ");
         }
         return sb.ToString();
     }
