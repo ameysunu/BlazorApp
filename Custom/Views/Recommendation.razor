@@ -29,14 +29,27 @@
     <div class="d-flex justify-content-center align-items-center">
         <Spinner Color="SpinnerColor.Primary" />
     </div>
-}
+} else {
 
 @if(recommendation != null)
 {
+    <h6>These recommendations are personalized just for you. Once, you submit any more of your mood entry or journal you can keep refreshing the data, and we will personalize as you go.</h6>
+    <br />
+
+    <h3>Journal Recommendation</h3>
+    <p>Based on your journal data, this is what we recommend to you:</p>
     <p>@recommendation.journal_recommendation</p>
+
+    <br/>
+    <br/>
+    <br />
+    <h3>Mood Recommendation</h3>
+    <p>@recommendation.mood_recommendation</p>
+
 } else
 {
     <p> You have no recommendations. You can request for a new one once you've put in your mood data or your journals</p>
+}
 }
 
 <br />
@@ -81,7 +94,7 @@
         StateHasChanged();
 
         var userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
-
+        
         var allMoods = await CosmosOperations.GetAllMoodsForRecommendation(userId);
         var allJournals = await CosmosOperations.GetAllJournalDataForRecommendation(userId);
 
@@ -102,20 +115,30 @@
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await client.SendAsync(request);
             refreshSent = true;
             refreshRequested = false;
+
+            HttpResponseMessage response = await client.SendAsync(request);
             StateHasChanged();
         }
 
         return "";
     }
 
-    public String FormatDateTime(String createdAt)
+    public string FormatDateTime(string createdAt)
     {
-        DateTime createdAtDateTime = DateTime.Parse(createdAt);
-        return createdAtDateTime.ToString("dddd, dd MMMM yyyy, hh:mm");
+        string format = "M/d/yyyy h:mm:ss tt";
+
+        if (DateTime.TryParseExact(createdAt, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime createdAtDateTime))
+        {
+            return createdAtDateTime.ToString("dddd, dd MMMM yyyy, hh:mm tt");
+        }
+        else
+        {
+            return "Invalid date and time format";
+        }
     }
+
 
     public static string ConvertAllMoodsToString(List<(string, string)> allMoods)
     {
