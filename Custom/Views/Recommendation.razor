@@ -44,7 +44,7 @@
     <br/>
     <br />
     <h3>Mood Recommendation</h3>
-    <p>@recommendation.mood_recommendation</p>
+        <p>@(new MarkupString(FormatText(recommendation.mood_recommendation)))</p>
 
 } else
 {
@@ -158,6 +158,15 @@
             sb.Append($"{journal}, ");
         }
         return sb.ToString();
+    }
+
+
+    public string FormatText(string text)
+    {
+        string pattern = @"\*\*(.*?)\*\*";
+        string formattedText = Regex.Replace(text, pattern, "<b>$1</b><br>");
+
+        return formattedText;
     }
 
 }
