@@ -44,4 +44,17 @@ namespace AmeyFunctions
        public string mood_recommendation { get; set;}
        public string journal_recommendation { get; set; }
     }
+
+    public class Articles
+    {
+        public string title { get; set; }
+        public string url { get; set; }
+        public string description { get; set; }
+
+    }
+
+    public class ArticlesRoot
+    {
+        public List<Articles> articles { get; set; }
+    }
 }
