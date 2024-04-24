@@ -94,6 +94,24 @@ namespace AmeyFunctions
             return await SendRequestToGemini(jsonPayload, log);
         }
 
+        public static async Task<String> GenerateInformativeArticles( ILogger log)
+        {
+            log.LogInformation("Generating Informative Articles");
 
+            string jsonPayload = $@"
+        {{
+            ""contents"": [
+                {{
+                    ""parts"": [
+                        {{
+                            ""text"": ""Generate 10 informative articles about the benefits of practicing mindfulness for mental well-being. Separate these articles in a JSON format""
+                        }}
+                    ]
+                }}
+            ]
+        }}";
+            return await SendRequestToGemini(jsonPayload, log);
+
+        }
     }
 }
