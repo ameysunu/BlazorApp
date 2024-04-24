@@ -30,7 +30,7 @@ namespace AmeyFunctions
                 }
             } catch (Exception ex)
             {
-                log.LogError("Error occurred while trying to deserialize articles");
+                log.LogError($"Error occurred while trying to deserialize articles {ex.Message}");
             }
 
         }
