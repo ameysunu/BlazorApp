@@ -104,7 +104,7 @@ namespace AmeyFunctions
                 {{
                     ""parts"": [
                         {{
-                            ""text"": ""Generate 10 informative articles about the benefits of practicing mindfulness for mental well-being. Separate these articles in a JSON format""
+                            ""text"": ""Generate 10 informative articles about the benefits of practicing mindfulness for mental well-being. Separate these articles in a JSON format, as {{ public string id, public string title, public string url, public string description, public string created_on }} ""
                         }}
                     ]
                 }}

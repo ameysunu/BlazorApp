@@ -47,9 +47,11 @@ namespace AmeyFunctions
 
     public class Articles
     {
+        public string id { get; set; }
         public string title { get; set; }
         public string url { get; set; }
         public string description { get; set; }
+        public string created_on { get; set; }
 
     }
 

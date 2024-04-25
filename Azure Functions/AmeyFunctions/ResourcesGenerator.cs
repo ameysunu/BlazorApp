@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -23,11 +24,8 @@ namespace AmeyFunctions
 
             try
             {
-                var articlesObject = JsonConvert.DeserializeObject<ArticlesRoot>(articles);
-                foreach (var article in articlesObject.articles)
-                {
-                    log.LogInformation(article.title);
-                }
+                List<Articles> articlesObject = JsonConvert.DeserializeObject<List<Articles>>(articles);
+                await CosmosController.CreateArticlesInCosmos(articlesObject, log);
             } catch (Exception ex)
             {
                 log.LogError($"Error occurred while trying to deserialize articles {ex.Message}");
