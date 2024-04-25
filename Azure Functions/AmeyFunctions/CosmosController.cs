@@ -117,6 +117,20 @@ namespace AmeyFunctions
                 }
 
             }
-        } 
+        }
+        
+        public static async Task CreateBlogInCosmos(BlogPosts blogs, ILogger log)
+        {
+            var container = await GetCosmosContainer("blogposts");
+            try
+            {
+                blogs.id = Guid.NewGuid().ToString();
+                blogs.created_at = DateTime.UtcNow.ToString();
+                await container.CreateItemAsync(blogs);
+            } catch (Exception ex)
+            {
+                log.LogError($"Exception: {ex.Message}");
+            }
+        }
     }
 }

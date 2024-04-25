@@ -94,7 +94,7 @@ namespace AmeyFunctions
             return await SendRequestToGemini(jsonPayload, log);
         }
 
-        public static async Task<String> GenerateInformativeArticles( ILogger log)
+        public static async Task<String> GenerateInformativeArticles(ILogger log)
         {
             log.LogInformation("Generating Informative Articles");
 
@@ -105,6 +105,26 @@ namespace AmeyFunctions
                     ""parts"": [
                         {{
                             ""text"": ""Generate 10 informative articles about the benefits of practicing mindfulness for mental well-being. Separate these articles in a JSON format, as {{ public string id, public string title, public string url, public string description, public string created_on }} ""
+                        }}
+                    ]
+                }}
+            ]
+        }}";
+            return await SendRequestToGemini(jsonPayload, log);
+
+        }
+
+        public static async Task<String> GenerateBlogPosts(ILogger log)
+        {
+            log.LogInformation("Generating Blog Posts for self care");
+
+            string jsonPayload = $@"
+        {{
+            ""contents"": [
+                {{
+                    ""parts"": [
+                        {{
+                            ""text"": ""Create a blog post discussing the importance of self-care for managing stress, promoting mental wellness and relaxation techniques. Return this in a JSON format, id, title, content, created_at. The content should be minimum of 200 words.""
                         }}
                     ]
                 }}

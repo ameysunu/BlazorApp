@@ -18,19 +18,40 @@ namespace AmeyFunctions
             var articles = await GeminiController.GenerateInformativeArticles(log);
             log.LogInformation(articles);
 
-            articles = articles.TrimStart().TrimEnd();
-            articles = articles.Replace("json", "");
-            articles = articles.Replace("`", "");
+            var articlesJson = SanitizeStringForJson(articles);
 
             try
             {
-                List<Articles> articlesObject = JsonConvert.DeserializeObject<List<Articles>>(articles);
+                List<Articles> articlesObject = JsonConvert.DeserializeObject<List<Articles>>(articlesJson);
                 await CosmosController.CreateArticlesInCosmos(articlesObject, log);
             } catch (Exception ex)
             {
                 log.LogError($"Error occurred while trying to deserialize articles {ex.Message}");
             }
 
+            var blogPosts = await GeminiController.GenerateBlogPosts(log);
+            log.LogInformation(blogPosts);
+
+            var blogsJson = SanitizeStringForJson(blogPosts);
+            try
+            {
+                BlogPosts blogs = JsonConvert.DeserializeObject<BlogPosts>(blogsJson);
+               await CosmosController.CreateBlogInCosmos(blogs, log);
+            }
+            catch (Exception ex)
+            {
+                log.LogError($"Error occurred while trying to deserialize blog {ex.Message}");
+            }
+
+        }
+
+        private static string SanitizeStringForJson(string dirtyString)
+        {
+            dirtyString = dirtyString.TrimStart().TrimEnd();
+            dirtyString = dirtyString.Replace("json", "");
+            dirtyString = dirtyString.Replace("`", "");
+
+            return dirtyString;
         }
     }
 }
