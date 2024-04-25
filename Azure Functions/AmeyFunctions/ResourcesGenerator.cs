@@ -12,7 +12,7 @@ namespace AmeyFunctions
     public class ResourcesGenerator
     {
         [FunctionName("ResourcesGenerator")]
-        public static async Task Run([TimerTrigger("0 * * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log)
+        public static async Task Run([TimerTrigger("0 0 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"Resources Generator trigger fired at: {DateTime.UtcNow}");
             var articles = await GeminiController.GenerateInformativeArticles(log);
