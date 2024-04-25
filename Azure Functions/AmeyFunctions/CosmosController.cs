@@ -98,5 +98,39 @@ namespace AmeyFunctions
                 }
             }
         }
+
+        public static async Task CreateArticlesInCosmos(List<Articles> articles, ILogger log)
+        {
+            var container = await GetCosmosContainer("articles");
+            
+            foreach(var article in articles)
+            {
+                try
+                {
+                    article.id = Guid.NewGuid().ToString();
+                    article.created_on = DateTime.UtcNow.ToString();
+                    await container.CreateItemAsync(article);
+                    log.LogInformation($"Article created: {article.title}");
+                } catch(Exception ex)
+                {
+                    log.LogError($"Exception: {ex.Message}");
+                }
+
+            }
+        }
+        
+        public static async Task CreateBlogInCosmos(BlogPosts blogs, ILogger log)
+        {
+            var container = await GetCosmosContainer("blogposts");
+            try
+            {
+                blogs.id = Guid.NewGuid().ToString();
+                blogs.created_at = DateTime.UtcNow.ToString();
+                await container.CreateItemAsync(blogs);
+            } catch (Exception ex)
+            {
+                log.LogError($"Exception: {ex.Message}");
+            }
+        }
     }
 }

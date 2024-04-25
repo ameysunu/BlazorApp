@@ -47,14 +47,20 @@ namespace AmeyFunctions
 
     public class Articles
     {
+        public string id { get; set; }
         public string title { get; set; }
         public string url { get; set; }
         public string description { get; set; }
+        public string created_on { get; set; }
 
     }
 
-    public class ArticlesRoot
+    public class BlogPosts
     {
-        public List<Articles> articles { get; set; }
+        public string id { get; set; }
+        public string title { get; set; }
+        public string content { get; set; }
+        public string created_at { get; set;}
     }
+
 }

@@ -415,6 +415,41 @@ namespace BlazorApp.Custom.Controllers
             return null;
         }
 
+        public static async Task<List<Articles>> GetAllArticles()
+        {
+            List<Articles> allArticles = [];
+            var container = await GetCosmosContainer("articles");
+            var query = new QueryDefinition($"SELECT * FROM c");
+
+            var queryIterator = container.GetItemQueryIterator<Articles>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach(var article in queryResponse)
+            {
+                allArticles.Add(article);
+            }
+
+            return allArticles;
+        }
+
+    }
+
+    public class Articles
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string url { get; set; }
+        public string description { get; set; }
+        public string created_on { get; set; }
+
+    }
+
+    public class BlogPosts
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string content { get; set; }
+        public string created_at { get; set; }
     }
 
     public class MoodImage
