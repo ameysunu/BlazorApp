@@ -47,11 +47,41 @@
                         </div>
                         <div class="card-body">
                             <blockquote class="blockquote mb-0">
-                                <p style="font-size: 12px;">@article.value.url</p>
-                                <footer class="blockquote-footer">@FormatDateTime(article.value.created_on)</footer>
+                                <p style="font-size: 15px;">@article.value.description</p>
+                                <br />
+                                <footer style="font-size: 12px;" class="blockquote-footer">@FormatDateTime(article.value.created_on)</footer>
                             </blockquote>
                             <br />
-                            <button type="button" onclick="window.location.href = '/resources/articles?id=@article.value.id'" class="btn btn-primary">View</button>
+                            <button type="button" onclick="window.location.href = '@article.value.url'" class="btn btn-primary">View</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <br />
+    <br />
+    <h4>Blogs</h4>
+    <br />
+
+    @if (allBlogs.Count > 0)
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var blog in allBlogs.Select((value, index) => new { value, index }))
+            {
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            @blog.value.title
+                        </div>
+                        <div class="card-body">
+                            <blockquote class="blockquote mb-0">
+                                <br />
+                                <footer class="blockquote-footer">@FormatDateTime(blog.value.created_at)</footer>
+                            </blockquote>
+                            <br />
+                            <button type="button" onclick="window.location.href = '/resources/blog?id=@blog.value.id'" class="btn btn-primary">View</button>
                         </div>
                     </div>
                 </div>
@@ -63,6 +93,7 @@
 
 @code {
     List<Articles> allArticles = [];
+    List<BlogPosts> allBlogs = [];
     bool isLoading = true;
 
 
@@ -71,6 +102,7 @@
         if (firstRender)
         {
             allArticles = await CosmosOperations.GetAllArticles();
+            allBlogs = await CosmosOperations.GetAllBlogs();
             isLoading = false;
             StateHasChanged();
         }
