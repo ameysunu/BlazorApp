@@ -4,6 +4,9 @@
 
 <h1>Resources</h1>
 
+@if (string.IsNullOrEmpty(blogId))
+{
+    
 @if (isLoading)
 {
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -52,7 +55,7 @@
                                 <footer style="font-size: 12px;" class="blockquote-footer">@FormatDateTime(article.value.created_on)</footer>
                             </blockquote>
                             <br />
-                            <button type="button" onclick="window.location.href = '@article.value.url'" class="btn btn-primary">View</button>
+                            <button type="button" onclick="window.location.href = 'https://@article.value.url'" class="btn btn-primary">View</button>
                         </div>
                     </div>
                 </div>
@@ -76,18 +79,24 @@
                             @blog.value.title
                         </div>
                         <div class="card-body">
-                            <blockquote class="blockquote mb-0">
-                                <br />
-                                <footer class="blockquote-footer">@FormatDateTime(blog.value.created_at)</footer>
-                            </blockquote>
                             <br />
-                            <button type="button" onclick="window.location.href = '/resources/blog?id=@blog.value.id'" class="btn btn-primary">View</button>
+                            <button type="button" onclick="window.location.href = '/resources?blogId=@blog.value.id'" class="btn btn-primary">View</button>
                         </div>
                     </div>
                 </div>
             }
         </div>
     }
+    }
+} else
+{
+    <br />
+    <br />
+    <h5>@currentBlog.title</h5>
+    <br />
+    <p>@currentBlog.content</p>
+    <br />
+    <p style="color: gray">Author: Google Gemini, Last Modified on: @FormatDateTime(currentBlog.created_at)</p>
 }
 
 
@@ -95,16 +104,32 @@
     List<Articles> allArticles = [];
     List<BlogPosts> allBlogs = [];
     bool isLoading = true;
-
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    String blogId = "";
+    BlogPosts currentBlog;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            allArticles = await CosmosOperations.GetAllArticles();
-            allBlogs = await CosmosOperations.GetAllBlogs();
-            isLoading = false;
-            StateHasChanged();
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            blogId = queryParams["blogId"];
+
+            if (string.IsNullOrEmpty(blogId))
+            {
+
+                allArticles = await CosmosOperations.GetAllArticles();
+                allBlogs = await CosmosOperations.GetAllBlogs();
+                isLoading = false;
+                StateHasChanged();
+            } else
+            {
+                currentBlog = await CosmosOperations.GetBlogById(blogId);
+                isLoading = false;
+                StateHasChanged();
+            }
         }
     }
 
