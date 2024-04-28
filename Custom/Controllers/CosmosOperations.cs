@@ -432,6 +432,45 @@ namespace BlazorApp.Custom.Controllers
             return allArticles;
         }
 
+        public static async Task<List<BlogPosts>> GetAllBlogs()
+        {
+            List<BlogPosts> allBlogPosts = [];
+            var container = await GetCosmosContainer("blogposts");
+            var query = new QueryDefinition($"SELECT * FROM c");
+
+            var queryIterator = container.GetItemQueryIterator<BlogPosts>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var blog in queryResponse)
+            {
+                allBlogPosts.Add(blog);
+            }
+
+            return allBlogPosts;
+        }
+
+        public static async Task<BlogPosts> GetBlogById(string blogId)
+        {
+            BlogPosts blogPosts = new BlogPosts();
+
+            var container = await GetCosmosContainer("blogposts");
+            var query = new QueryDefinition($"SELECT * FROM c WHERE c.id = @PropertyValue")
+.WithParameter("@PropertyValue", blogId);
+
+            var queryIterator = container.GetItemQueryIterator<BlogPosts>(query);
+            var queryResponse = await queryIterator.ReadNextAsync();
+
+            foreach (var blog in queryResponse)
+            {
+
+                blogPosts = blog;
+                return blogPosts;
+
+            }
+
+            return blogPosts;
+        }
+
     }
 
     public class Articles
