@@ -1,0 +1,15 @@
+﻿@page "/about"
+
+<PageTitle>About</PageTitle>
+
+<h1>About</h1>
+<br />
+
+<h4>Wellbeing by Amey © @year</h4>
+<p style="color: gray">Built using <a href="https://learn.microsoft.com/aspnet/core/">ASP .NET Blazor </a></p>
+
+<h5>Spot any bugs or issues? Please feel free to open an issue or a pull request <a href="https://github.com/ameysunu/BlazorApp">here</a>.</h5>
+
+@code {
+    public string year = DateTime.Now.Year.ToString();
+}
