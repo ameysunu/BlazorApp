@@ -3,13 +3,66 @@
 <PageTitle>Login</PageTitle>
 
 <div class="container">
-    <h1>Login</h1>
+    <br />
+    
+    <style>
+                .dot {
+                    border: 3px solid #000;
+                    border-radius: 50%;
+                    height: 15px;
+                    width: 15px;
+                }
 
-    <div class="col-md-6">
-        <p>Authentication powered by Okta Auth0</p>
-    </div>
+                .bar {
+                    align-items: center;
+                    background-color: #ff8473;
+                    border-left: 3px solid #000;
+                    border-right: 3px solid #000;
+                    border-top: 3px solid #000;
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                    display: flex;
+                    height: 50px;
+                    padding-left: 16px;
+                    padding-right: 16px;
+                }
 
-    <button class="btn btn-primary" @onclick="_Login" disabled="@processRegistration">Secure Login with Auth0</button>
+
+                .box-content {
+                    background-color: #fff;
+                    border: 3px solid #000;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    padding: 32px;
+                }
+
+                .box {
+                    border-radius: 10px
+                }
+
+    </style>
+
+            <div class="box">
+                <div class="bar">
+
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+
+                </div>
+                <div class="box-content">
+
+                    <h1>Welcome Back!</h1>
+                    <p>Hey there, let's get you back logged in so you can get started.</p>
+                    <br />
+                    <p style="font-size: 20px">Authentication powered by Okta Auth0</p>
+
+                    <button class="btn btn-primary" @onclick="_Login" disabled="@processRegistration">Secure Login with Auth0</button>
+                    <br/>
+                    <br />
+                    <p style="font-size: 18px; color: dimgray">Don't have an account? Register here <a href="/register">now</a>, or you can login above to directly create an account with Auth0.</p>
+                </div>
+            </div>
 
     @if (!string.IsNullOrEmpty(successMessage))
     {
@@ -30,8 +83,7 @@
             Please wait, authenticating from Auth0. Do not click refresh or go back.
         </div>
     }
-
-</div>
+    </div>
 
 
 
