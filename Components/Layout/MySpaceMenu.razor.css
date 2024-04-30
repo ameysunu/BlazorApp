@@ -17,7 +17,7 @@
 
 .top-row {
     height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    /*background-color: rgba(0,0,0,0.4);*/
 }
 
 .navbar-brand {
@@ -102,4 +102,38 @@
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }
+}
+
+.dot {
+    border: 3px solid #000;
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+}
+
+.bar {
+    align-items: center;
+    background-color: #845EC2;
+    border-left: 3px solid #000;
+    border-right: 3px solid #000;
+    border-top: 3px solid #000;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    height: 50px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+
+.box-content {
+    background-color: #B39CD0;
+    border: 3px solid #000;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 32px;
+}
+
+.box {
+    border-radius: 10px
 }
