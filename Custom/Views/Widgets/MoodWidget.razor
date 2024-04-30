@@ -1,4 +1,4 @@
-﻿<div class="card" style="background-color: #FFDFCA;">
+﻿@* <div class="card" style="background-color: #FFDFCA;">
     <div class="card-body">
         <h4 class="card-title">Daily Mood</h4>
         @if (loader)
@@ -20,7 +20,68 @@
        </div>
 
     </div>
+</div> *@
+
+<div class="box">
+    <div class="bar-mood">
+
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+
+    </div>
+    <div class="box-content">
+
+        <h1>Daily Mood</h1>
+        @if (loader)
+        {
+            <div class="spinner-grow spinner-grow-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <br />
+        } else
+        {
+            <h5>Your average mood: @moodMessage </h5>
+            <p style="font-size: 20px">@moodText</p>
+        }
+        <br />
+        <button type="button" onclick="window.location.href='/mood-tracking'" class="btn btn-primary">Click to log</button>
+       
+    </div>
 </div>
+<style>
+                .dot {
+                    border: 3px solid #000;
+                    border-radius: 50%;
+                    height: 15px;
+                    width: 15px;
+                }
+
+                .bar-mood {
+                    align-items: center;
+                    background-color: #FFDFCA;
+                    border-left: 3px solid #000;
+                    border-right: 3px solid #000;
+                    border-top: 3px solid #000;
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                    display: flex;
+                    height: 50px;
+                    padding-left: 16px;
+                    padding-right: 16px;
+                }
+
+
+                .box-content {
+                    background-color: #fff;
+                    border: 3px solid #000;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    padding: 32px;
+                }
+
+
+    </style>
 
 @code {
 @inject IJSRuntime JSRuntime
