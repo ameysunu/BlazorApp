@@ -3,14 +3,25 @@
 <br />
 <br />
 
-<h4> Select how you're feeling right now: </h4>
+
+
+<div class="container overflow-hidden">
+    <div class="row">
+        <div class="col">
+            <h4> Select how you're feeling right now: </h4>
+         </div>
+        <div class="col">
+            <h1 class="text-center"> @emoji </h1>
+            <input type="range" class="form-range" min="0" max="15" step="2.5" id="moodRange" @oninput="GetMoodValue">
+            <div class="d-flex justify-content-between">
+                <span>Great</span>
+                <span>Not Great</span>
+            </div>
+        </div>
+         </div>
+        </div>
 <br />
-<h1 class="text-center"> @emoji </h1>
-<input type="range" class="form-range" min="0" max="15" step="2.5" id="moodRange" @oninput="GetMoodValue" >
-<div class="d-flex justify-content-between">
-    <span>Great</span>
-    <span>Not Great</span>
-</div>
+
 
 @if (!nextTapped)
 {

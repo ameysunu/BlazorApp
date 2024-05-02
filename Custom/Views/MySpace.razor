@@ -3,41 +3,86 @@
 <PageTitle> My Space </PageTitle>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<h1> What's happening? </h1>
-
-<p> Your overall mood for this month is as follows: </p>
-
-@if (isLoading)
-{
-    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <Spinner Color="SpinnerColor.Primary" />
+<div class="box">
+    <div class="bar">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
     </div>
-}
-else if(!string.IsNullOrEmpty(message))
-{
-    <div class="alert alert-info mt-3" role="alert">
-        @message
-    </div>
-}
+    <div class="box-content">
+        <h1> What's happening? </h1>
 
-<div>
-    <canvas id="myChart" width="400" height="400"></canvas>
+        <p> Your overall mood for this month is as follows: </p>
+        @if (isLoading)
+        {
+            <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+                <Spinner Color="SpinnerColor.Primary" />
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-info mt-3" role="alert">
+                @message
+            </div>
+        }
+
+        <div>
+            <canvas id="myChart" width="400" height="400"></canvas>
+        </div>
+
+        @if (showMoodSuggestion)
+        {
+            <br />
+            <br />
+            <h3>Monthly Mood Suggestions:</h3>
+            <h6>You've been overall feeling like @moodSuggestion Here are some recommendations for you:</h6>
+
+            <br />
+
+            @foreach (var rec in moodRecommendation)
+            {
+                <p>@(new MarkupString(FormatBoldText(rec)))</p>
+            }
+        }
+    </div>
 </div>
 
-@if (showMoodSuggestion)
-{
-    <br />
-    <br />
-    <h3>Monthly Mood Suggestions:</h3>
-    <h6>You've been overall feeling like @moodSuggestion Here are some recommendations for you:</h6>
-
-    <br />
-    
-    @foreach (var rec in moodRecommendation)
-    {
-        <p>@(new MarkupString(FormatBoldText(rec)))</p>
+<style>
+    .dot {
+        border: 3px solid #000;
+        border-radius: 50%;
+        height: 15px;
+        width: 15px;
     }
-}
+
+    .bar {
+        align-items: center;
+        background-color: #FF9671;
+        border-left: 3px solid #000;
+        border-right: 3px solid #000;
+        border-top: 3px solid #000;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        display: flex;
+        height: 50px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+
+    .box-content {
+        background-color: #fff;
+        border: 3px solid #000;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding: 32px;
+    }
+
+    .box {
+        border-radius: 10px
+    }
+
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {

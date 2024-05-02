@@ -3,6 +3,24 @@
 @inject NavigationManager NavigationManager
 
 <div class="page">
+
+    <style>
+
+    .top-row a {
+        text-decoration: none;
+        color: #000000;
+        padding: 8px 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .top-row a:hover {
+        background-color: #000000;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+</style>
+
     @if (IsSpacePage && isLogged)
     {
         <div class="sidebar">
@@ -35,7 +53,7 @@
                     <a href="login"> Login</a>
                     <a href="register"> Register</a>
                 }
-                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+                <a href="/about" target="_blank">About</a>
             </div>
 
             <article class="content px-4">

@@ -10,7 +10,7 @@
 @if (isLoading)
 {
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @for (int i=0; i<15; i++ )
+        @for (int i=0; i<5; i++ )
         {
             <div class="col-md-3">
                 <div class="card" aria-hidden="true">
@@ -35,32 +35,30 @@
 {
     <br />
     <br />
-    <h4>Articles</h4>
-    <br />
 
     @if(allArticles.Count > 0)
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach (var article in allArticles.Select((value, index) => new { value, index }))
-            {
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-header">
-                            @article.value.title
-                        </div>
-                        <div class="card-body">
-                            <blockquote class="blockquote mb-0">
-                                <p style="font-size: 15px;">@article.value.description</p>
-                                <br />
-                                <footer style="font-size: 12px;" class="blockquote-footer">@FormatDateTime(article.value.created_on)</footer>
-                            </blockquote>
-                            <br />
-                            <button type="button" onclick="window.location.href = 'https://@article.value.url'" class="btn btn-primary">View</button>
-                        </div>
+    <h4>Articles</h4>
+     <br />
+     <ul class="list-group list-group-flush">
+        @foreach (var article in allArticles.Select((value, index) => new { value, index }))
+        {
+
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">
+                        <h5>@article.value.title</h5>
+                        <br />
+                        <p style="font-size: 12px;" class="blockquote-footer">@FormatDateTime(article.value.created_on)</p>
+                    </div>
+                    <div class="col">
+                        <button type="button" onclick="window.location.href = 'https://@article.value.url'" class="btn btn-primary">View</button>
                     </div>
                 </div>
-            }
-        </div>
+            </li>
+        }
+
+     </ul>
     }
 
     <br />
@@ -73,18 +71,19 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             @foreach (var blog in allBlogs.Select((value, index) => new { value, index }))
             {
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-header">
-                            @blog.value.title
+                    <div class="box">
+                        <div class="bar">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
                         </div>
-                        <div class="card-body">
-                            <br />
+                        <div class="box-content">
+                            <h5>@blog.value.title</h5>
                             <button type="button" onclick="window.location.href = '/resources?blogId=@blog.value.id'" class="btn btn-primary">View</button>
                         </div>
-                    </div>
-                </div>
+                       </div>
             }
+            <br />
         </div>
     }
     }
@@ -98,6 +97,46 @@
     <br />
     <p style="color: gray">Author: Google Gemini, Last Modified on: @FormatDateTime(currentBlog.created_at)</p>
 }
+
+<style>
+.roboto-slab {
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  font-weight: 120;
+  font-style: normal;
+}
+
+    .dot {
+        border: 3px solid #000;
+        border-radius: 50%;
+        height: 15px;
+        width: 15px;
+    }
+
+    .bar {
+        align-items: center;
+        background-color: #845EC2;
+        border-left: 3px solid #000;
+        border-right: 3px solid #000;
+        border-top: 3px solid #000;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        display: flex;
+        height: 50px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+
+    .box-content {
+        background-color: #fff;
+        border: 3px solid #000;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding: 32px;
+    }
+
+</style>
 
 
 @code {

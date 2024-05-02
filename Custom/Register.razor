@@ -2,50 +2,101 @@
 <PageTitle>Register</PageTitle>
 
 <div class="container">
-    <h1>Registration</h1>
+    <style>
+        .dot {
+            border: 3px solid #000;
+            border-radius: 50%;
+            height: 15px;
+            width: 15px;
+        }
 
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger mt-3" role="alert">
-            @errorMessage
+        .bar {
+            align-items: center;
+            background-color: #756292;
+            border-left: 3px solid #000;
+            border-right: 3px solid #000;
+            border-top: 3px solid #000;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            height: 50px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+
+        .box-content {
+            background-color: #fff;
+            border: 3px solid #000;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            padding: 32px;
+        }
+
+        .box {
+            border-radius: 10px
+        }
+
+    </style>
+    <div class="box">
+        <div class="bar">
+
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+
         </div>
-    }
+        <div class="box-content">
+            <h1>Registration</h1>
+            <br />
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger mt-3" role="alert">
+                    @errorMessage
+                </div>
+            }
 
-    @if (!string.IsNullOrEmpty(successMessage))
-    {
-        <div class="alert alert-success mt-3" role="alert">
-            @successMessage
-        </div>
-    }
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="alert alert-success mt-3" role="alert">
+                    @successMessage
+                </div>
+            }
 
-    @if (successCreation)
-    {
-        <button class="btn btn-primary" onclick="window.location.href='/login'" >Go to login</button>
-    }
-    else
-    {
+            @if (successCreation)
+            {
+                <button class="btn btn-primary" onclick="window.location.href='/login'">Go to login</button>
+            }
+            else
+            {
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <div class="input-group">
-                        <input id="email" class="form-control" @bind="email" placeholder="Email" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <div class="input-group">
+                                <input id="email" class="form-control" @bind="email" placeholder="Email" />
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <div class="input-group">
+                                <input id="email" class="form-control" @bind="confirmEmail" placeholder="Confirm email" />
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <div class="input-group">
+                                <input type="password" id="password" class="form-control" @bind="password" placeholder="Password" />
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" @onclick="_Register" disabled="@processRegistration">Register</button>
                     </div>
                 </div>
-                <div class="form-group mb-3">
-                    <div class="input-group">
-                        <input id="email" class="form-control" @bind="confirmEmail" placeholder="Confirm email" />
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <div class="input-group">
-                        <input type="password" id="password" class="form-control" @bind="password" placeholder="Password" />
-                    </div>
-                </div>
-                <button class="btn btn-primary" @onclick="_Register" disabled="@processRegistration">Register</button>
+            }
+
+            <div class="alert alert-info mt-3" role="alert">
+                If you face any issues while registering, you can go back to Login and Sign-in with Auth0 and complete your registration there
             </div>
         </div>
-    }
+    </div>
 </div>
 
     @code {
