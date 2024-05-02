@@ -44,6 +44,21 @@ else if(journalList.Count > 0)
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach (var journal in journalList.Select((value, index) => new { value, index }))
         {
+            <div class="box">
+                <div class="bar">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="box-content">
+                    <h4>@journal.value.title</h4>
+                    <p>@journal.value.summary</p>
+                    <footer class="blockquote-footer">@FormatDateTime(journal.value.created_at)</footer>
+                    <br />
+                    <button type="button" onclick="window.location.href = '/journals?id=@journal.value.id'" class="btn btn-primary">View</button>
+                </div>
+            </div>
+@* 
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-header">
@@ -58,7 +73,7 @@ else if(journalList.Count > 0)
                         <button type="button" onclick="window.location.href = '/journals?id=@journal.value.id'" class="btn btn-primary">View</button>
                     </div>
                 </div>
-            </div>
+            </div> *@
         }
     </div>
 } else
@@ -67,6 +82,42 @@ else if(journalList.Count > 0)
         You have no journals. Create one to get started.
     </div>
 }
+
+<style>
+        .dot {
+        border: 3px solid #000;
+        border-radius: 50%;
+        height: 15px;
+        width: 15px;
+    }
+
+    .bar {
+        align-items: center;
+        background-color: #845EC2;
+        border-left: 3px solid #000;
+        border-right: 3px solid #000;
+        border-top: 3px solid #000;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        display: flex;
+        height: 50px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+
+    .box-content {
+        background-color: #fff;
+        border: 3px solid #000;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding: 32px;
+    }
+
+    .box {
+        border-radius: 10px
+    }
+</style>
 
 @code {
     public bool isLoading = true;
