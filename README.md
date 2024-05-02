@@ -43,8 +43,8 @@ Wellbeing is an application dedicated to promoting mental health and well-being 
 
 4. Configure appsettings.json:
 
-    ```
-    {
+```json
+{
   "Logging": {
     "LogLevel": {
       "Default": "Information",
@@ -63,11 +63,14 @@ Wellbeing is an application dedicated to promoting mental health and well-being 
   "GeminiEndpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
   "RecommendationEngineUrl": "AZURE-FUNCTION-URL"
 }
-
-    ```
+```
 
 5. Run the application:
 
     ```
     dotnet run
     ```
+
+## Fun Fact
+
+This entire README.md file was auto written by Google Gemini :)
