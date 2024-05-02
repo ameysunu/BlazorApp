@@ -43,7 +43,7 @@ Wellbeing is an application dedicated to promoting mental health and well-being 
 
 4. Configure appsettings.json:
 
-    ```
+    ```json
     {
   "Logging": {
     "LogLevel": {
@@ -71,3 +71,7 @@ Wellbeing is an application dedicated to promoting mental health and well-being 
     ```
     dotnet run
     ```
+
+## Fun Fact
+
+This entire README.md file was auto written by Google Gemini :)
