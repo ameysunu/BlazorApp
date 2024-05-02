@@ -63,7 +63,7 @@ Wellbeing is an application dedicated to promoting mental health and well-being 
   "GeminiEndpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
   "RecommendationEngineUrl": "AZURE-FUNCTION-URL"
 }
-
+```
 
 5. Run the application:
 
