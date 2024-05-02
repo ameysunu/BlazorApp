@@ -43,8 +43,8 @@ Wellbeing is an application dedicated to promoting mental health and well-being 
 
 4. Configure appsettings.json:
 
-    ```json
-    {
+```json
+{
   "Logging": {
     "LogLevel": {
       "Default": "Information",
@@ -64,7 +64,6 @@ Wellbeing is an application dedicated to promoting mental health and well-being 
   "RecommendationEngineUrl": "AZURE-FUNCTION-URL"
 }
 
-    ```
 
 5. Run the application:
 
